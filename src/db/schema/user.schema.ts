@@ -7,7 +7,7 @@ export const userSchema = pgTable('user', {
   password: char({ length: 200 }).notNull(),
   user_token: char({ length: 255 }),
   updated_at: timestamp({ mode: 'string' }).$onUpdateFn(() =>
-    new Date().toString(),
+    new Date().toDateString(),
   ),
   created_at: timestamp({ mode: 'string' }).defaultNow(),
 });
