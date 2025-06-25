@@ -12,10 +12,6 @@ export class BusinessExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     response
       .status(200)
-      .end(
-        JSON.stringify(
-          createResponse(exception.code, undefined, exception.message),
-        ),
-      );
+      .json(createResponse(exception.code, undefined, exception.message));
   }
 }
