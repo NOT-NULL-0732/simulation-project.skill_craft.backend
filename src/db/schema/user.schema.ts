@@ -5,6 +5,8 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import { lessonClassSchema, lessonSchema } from '@/db/schema/lesson.schema';
 
 export const userSchema = pgTable('user', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -17,3 +19,8 @@ export const userSchema = pgTable('user', {
   ),
   created_at: timestamp({ mode: 'string' }).defaultNow(),
 });
+
+export const userSchemaRelations = relations(userSchema, ({ many }) => ({
+  created_lessons: many(lessonSchema),
+  join_lessons: many(lessonClassSchema),
+}));

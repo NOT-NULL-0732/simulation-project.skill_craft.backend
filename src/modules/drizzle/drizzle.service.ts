@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { userSchema } from '@/db/schema/user.schema';
 import { AppConfig } from '@/common/config/index.config';
 import * as schema from '@/db/schema/index.schema';
 
@@ -12,7 +11,7 @@ export class DrizzleService {
     this.db = drizzle({
       connection: AppConfig.db.connectionString,
       schema: {
-        userSchema,
+        ...schema,
       },
     });
   }

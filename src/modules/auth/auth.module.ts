@@ -8,6 +8,6 @@ import { LoginGuard } from '@/common/guard/login.guard';
   imports: [DrizzleModule],
   controllers: [AuthController],
   providers: [AuthService, LoginGuard],
-  exports: [LoginGuard],
+  exports: [AuthService, LoginGuard],
 })
 export class AuthModule {}

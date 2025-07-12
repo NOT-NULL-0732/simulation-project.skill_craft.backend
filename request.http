@@ -1,0 +1,52 @@
+### 登录
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "example@qq.com",
+  "password": "12345678"
+}
+
+### 注册
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "example@qq.com",
+  "user_name": "example_u",
+  "password": "12345678"
+}
+
+### 测试困难
+POST {{host}}/auth/test-login
+Authorization: {{admin_token}}
+
+### 查看自己创建的课程
+GET {{host}}/lesson/lesson-list
+Authorization: {{admin_token}}
+
+### 创建课程
+POST {{host}}/lesson/lesson-create
+Authorization: {{admin_token}}
+Content-Type: application/json
+
+{
+  "name": "测试课程"
+}
+
+### 加入课程
+POST {{host}}/lesson/lesson-join
+Authorization: {{user_token}}
+Content-Type: application/json
+
+{
+  "lesson_id": 10
+}
+
+### 获取用户加入的课程
+GET {{host}}/lesson/my-lesson-json
+Authorization: {{user_token}}
+
+### 查看当前课程的用户
+GET {{host}}/lesson/10/user
+Authorization: {{user_token}}

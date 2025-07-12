@@ -26,9 +26,7 @@ export class AuthController {
     body: z.infer<typeof LoginZSchema>,
   ) {
     const loginResult = await this.authService.login(body);
-    return createResponse(ResponseStatusCode.REQUEST_SUCCESS, {
-      user_token: loginResult,
-    });
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS, loginResult);
   }
 
   @Post('test-login')
