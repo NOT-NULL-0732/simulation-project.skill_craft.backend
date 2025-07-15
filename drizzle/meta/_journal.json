@@ -1,1 +1,34 @@
-{"version":"7","dialect":"postgresql","entries":[]}
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1750661925025,
+      "tag": "0000_shocking_krista_starr",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1750684070815,
+      "tag": "0001_hesitant_nova",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750931954902,
+      "tag": "0002_chubby_true_believers",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1751795464394,
+      "tag": "0003_wet_living_lightning",
+      "breakpoints": true
+    }
+  ]
+}

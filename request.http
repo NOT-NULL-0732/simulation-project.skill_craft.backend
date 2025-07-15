@@ -44,7 +44,7 @@ Content-Type: application/json
 }
 
 ### 获取用户加入的课程
-GET {{host}}/lesson/my-lesson-json
+GET {{host}}/lesson/my-lesson-join
 Authorization: {{user_token}}
 
 ### 查看当前课程的用户

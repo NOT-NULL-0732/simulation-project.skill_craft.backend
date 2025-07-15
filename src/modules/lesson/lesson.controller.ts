@@ -68,7 +68,7 @@ export class LessonController {
   }
 
   @UseGuards(LoginGuard)
-  @Get('my-lesson-json')
+  @Get('my-lesson-join')
   async myJoinLesson(@AuthUser() user: IAuthenticatedUser) {
     const result = await this.db.query.lessonClassSchema.findMany({
       where: eq(lessonClassSchema.user_id, user.userId),
