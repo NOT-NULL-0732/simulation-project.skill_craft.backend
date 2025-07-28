@@ -18,5 +18,4 @@ export const StatusMessage: Record<ResponseStatusCode, string> = {
   [ResponseStatusCode.AUTH__PASSWORD_ERROR]: "密码错误",
   [ResponseStatusCode.COMMON_INSERT_UNIQUE_ERROR]: "唯一索引",
   [ResponseStatusCode.AUTH__TOKEN_DATE_ERROR]: "令牌过期",
-  
 };

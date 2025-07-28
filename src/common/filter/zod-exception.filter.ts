@@ -7,6 +7,7 @@ import { BusinessException } from '@/common/exception/business.exception';
 @Catch(ZodValidationException)
 export class ZodExceptionFilter implements ExceptionFilter {
   catch(exception: ZodValidationException, host: ArgumentsHost) {
+    console.log(exception);
     throw new BusinessException(ResponseStatusCode.COMMON__VALIDATE_ERROR);
   }
 }
