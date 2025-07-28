@@ -7,6 +7,9 @@ export enum ResponseStatusCode {
   AUTH__TOKEN_VALIDATOR_ERROR = 2000,
   AUTH__PASSWORD_ERROR = 2001,
   AUTH__TOKEN_DATE_ERROR = 2002,
+  // 3000 ~ 3001 课程模块相关
+  LESSON__LESSON_NOTFOUND = 3000,
+  LESSON__REPEAT_JOIN_LESSON = 3001
 }
 
 export const StatusMessage: Record<ResponseStatusCode, string> = {
@@ -18,4 +21,7 @@ export const StatusMessage: Record<ResponseStatusCode, string> = {
   [ResponseStatusCode.AUTH__PASSWORD_ERROR]: "密码错误",
   [ResponseStatusCode.COMMON_INSERT_UNIQUE_ERROR]: "唯一索引",
   [ResponseStatusCode.AUTH__TOKEN_DATE_ERROR]: "令牌过期",
+  // 3000 ~ 3001 课程模块相关
+  [ResponseStatusCode.LESSON__LESSON_NOTFOUND]: "课程不存在",
+  [ResponseStatusCode.LESSON__REPEAT_JOIN_LESSON]: "重复加入课程"
 };

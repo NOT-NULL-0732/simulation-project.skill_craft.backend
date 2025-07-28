@@ -29,7 +29,7 @@ export class AuthService {
       if (err instanceof DrizzleQueryError && err) {
         throw new BusinessException(
           ResponseStatusCode.COMMON_INSERT_UNIQUE_ERROR,
-          '用户名重复',
+          '用户名或邮箱重复',
         );
       }
     }
