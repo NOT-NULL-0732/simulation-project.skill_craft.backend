@@ -1,3 +1,22 @@
 现在令牌功能做好了，接下来是课程中心的增删改查好吗？
 课程中心得有
 名字、id、发布者、，
+
+课程中有课程视频
+暂且每一个课程下有很多课程节点
+课程子节点后面再做吧 目前暂且是1-1, 1-2 而不是1-1-1, 1-1-2, 1-2-1这样子
+
+lesson_learn
+- id
+- lesson_id
+- order(integer, 计算公式：(前节点+后节点)/2 === order)
+
+/lesson/lesson-node
+POST 创建课程节点
+- name
+- video_url
+- position
+    - prev_node
+    - next_node
+
+lesson_resources 课程专属部分资源 待做
