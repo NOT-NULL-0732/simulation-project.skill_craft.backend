@@ -6,7 +6,7 @@ export const roleSchema = pgTable('role', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   role_key: char({ length: 40 }).notNull().unique(),
   name: char({ length: 20 }).notNull().unique(),
-  description: varchar({ length: 200 }).notNull(),
+  description: varchar({ length: 200 }),
 });
 
 export const roleSchemaRelation = relations(roleSchema, ({ many }) => ({
