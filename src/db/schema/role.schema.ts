@@ -4,8 +4,8 @@ import { permissionSchema } from '@/db/schema/permission.schema';
 
 export const roleSchema = pgTable('role', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  role_key: char({ length: 40 }).notNull(),
-  name: char({ length: 20 }).notNull(),
+  role_key: char({ length: 40 }).notNull().unique(),
+  name: char({ length: 20 }).notNull().unique(),
   description: varchar({ length: 200 }).notNull(),
 });
 
