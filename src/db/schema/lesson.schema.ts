@@ -40,3 +40,11 @@ export const lessonClassSchemaRelation = relations(
     }),
   }),
 );
+
+export const lessonNodeSchema = pgTable('lesson-node', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  lesson_id: integer(),
+  name: varchar({ length: 30 }).notNull(),
+  video_url: varchar({ length: 50 }).notNull(),
+  order: integer().notNull(),
+});
