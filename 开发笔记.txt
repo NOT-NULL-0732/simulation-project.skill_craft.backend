@@ -19,4 +19,8 @@ POST 创建课程节点
     - prev_node
     - next_node
 
+文件上传接口设计
+/common/upload
+上传一个文件 还要有配置中心 接着返回一个ID
+
 lesson_resources 课程专属部分资源 待做
