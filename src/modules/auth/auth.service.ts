@@ -6,9 +6,18 @@ import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { BusinessException } from '@/common/exception/business.exception';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
-import { LoginZSchema, RegisterZSchema } from '@/modules/auth/auth.z-schema';
+import {
+  CreatePermissionZSchema,
+  CreateRoleZSchema,
+  LoginZSchema,
+  RegisterZSchema,
+} from '@/modules/auth/auth.z-schema';
 // @ts-ignore
 import { DrizzleQueryError } from 'drizzle-orm/errors';
+import { roleSchema } from '@/db/schema/role.schema';
+import { permissionSchema } from '@/db/schema/permission.schema';
+import { userRoleSchema } from '@/db/schema/user-role.schema';
+import { rolePermissionSchema } from '@/db/schema/role-permission.schema';
 
 @Injectable()
 export class AuthService {
@@ -97,6 +106,61 @@ export class AuthService {
         ResponseStatusCode.AUTH__TOKEN_VALIDATOR_ERROR,
       );
     return parseUserId.data;
+  }
+
+  async getRoles() {
+    return this.drizzleService.db.query.roleSchema.findMany();
+  }
+
+  async createRole(body: z.infer<typeof CreateRoleZSchema>): Promise<number> {
+    const insertResult = await this.drizzleService.db
+      .insert(roleSchema)
+      .values({
+        name: body.name,
+        role_key: body.role_key,
+        description: body.description,
+      })
+      .onConflictDoNothing({
+        target: [roleSchema.role_key],
+      })
+      .returning({ id: roleSchema.id });
+    if (insertResult.length === 0)
+      throw new BusinessException(
+        ResponseStatusCode.AUTH__ROLE_IDENTIFICATION_REPEAT_ERROR,
+      );
+    return insertResult[0].id;
+  }
+
+  async getPermissions() {
+    return this.drizzleService.db.query.permissionSchema.findMany();
+  }
+
+  async createUserRole() {
+    this.drizzleService.db.insert(userRoleSchema).values({});
+  }
+  async createRolePermission() {
+    this.drizzleService.db.insert(rolePermissionSchema).values({});
+  }
+
+  async createPermission(
+    body: z.infer<typeof CreatePermissionZSchema>,
+  ): Promise<number> {
+    const insertResult = await this.drizzleService.db
+      .insert(permissionSchema)
+      .values({
+        name: body.name,
+        permission_key: body.permission_key,
+        description: body.description,
+      })
+      .onConflictDoNothing({
+        target: [permissionSchema.permission_key],
+      })
+      .returning({ id: permissionSchema.id });
+    if (insertResult.length === 0)
+      throw new BusinessException(
+        ResponseStatusCode.AUTH__PERMISSION_IDENTIFICATION_REPEAT_ERROR,
+      );
+    return insertResult[0].id;
   }
 
   private _genRandomToken(userId: number, date: Date) {

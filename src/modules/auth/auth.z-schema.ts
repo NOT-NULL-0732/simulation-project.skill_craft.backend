@@ -10,3 +10,13 @@ export const RegisterZSchema = z.object({
   user_name: string().max(10),
   password: string().min(8).max(12),
 });
+export const CreateRoleZSchema = z.object({
+  name: string().nonempty().min(2).max(20),
+  role_key: string().nonempty().min(2).max(40),
+  description: string().nullable(),
+});
+export const CreatePermissionZSchema = z.object({
+  name: string().nonempty().min(2).max(20),
+  permission_key: string().nonempty().min(2).max(40),
+  description: string().nullable(),
+});
