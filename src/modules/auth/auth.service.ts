@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { DrizzleService } from '@/modules/drizzle/drizzle.service';
 import * as crypto from 'node:crypto';
 import { userSchema } from '@/db/schema/user.schema';
 import { and, eq } from 'drizzle-orm';
@@ -9,6 +8,7 @@ import { ResponseStatusCode } from '@/common/types/response-status.enum';
 import {
   CreatePermissionZSchema,
   CreateRoleZSchema,
+  CreateUserRoleZSchema,
   LoginZSchema,
   RegisterZSchema,
 } from '@/modules/auth/auth.z-schema';
@@ -18,18 +18,17 @@ import { roleSchema } from '@/db/schema/role.schema';
 import { permissionSchema } from '@/db/schema/permission.schema';
 import { userRoleSchema } from '@/db/schema/user-role.schema';
 import { rolePermissionSchema } from '@/db/schema/role-permission.schema';
+import db from '@/db';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly drizzleService: DrizzleService) {}
-
   _hashPassword(password: string): string {
     return crypto.createHash('sha256').update(password).digest('hex');
   }
 
   async register(data: z.infer<typeof RegisterZSchema>) {
     try {
-      await this.drizzleService.db.insert(userSchema).values({
+      await db.insert(userSchema).values({
         user_name: data.user_name,
         password: this._hashPassword(data.password),
         email: data.email,
@@ -45,7 +44,7 @@ export class AuthService {
   }
 
   async login(data: z.infer<typeof LoginZSchema>) {
-    const user = await this.drizzleService.db.query.userSchema.findFirst({
+    const user = await db.query.userSchema.findFirst({
       where: and(
         eq(userSchema.email, data.email),
         eq(userSchema.password, this._hashPassword(data.password)),
@@ -54,7 +53,7 @@ export class AuthService {
     if (!user)
       throw new BusinessException(ResponseStatusCode.AUTH__PASSWORD_ERROR);
     const user_token = this._genRandomToken(user.id, new Date());
-    const updatedUsers = await this.drizzleService.db
+    const updatedUsers = await db
       .update(userSchema)
       .set({ user_token })
       .where(eq(userSchema.id, user.id))
@@ -95,7 +94,7 @@ export class AuthService {
         ResponseStatusCode.AUTH__TOKEN_VALIDATOR_ERROR,
       );
 
-    const findResult = await this.drizzleService.db.query.userSchema.findFirst({
+    const findResult = await db.query.userSchema.findFirst({
       where: and(
         eq(userSchema.id, parseUserId.data),
         eq(userSchema.user_token, userToken),
@@ -109,11 +108,11 @@ export class AuthService {
   }
 
   async getRoles() {
-    return this.drizzleService.db.query.roleSchema.findMany();
+    return db.query.roleSchema.findMany();
   }
 
   async createRole(body: z.infer<typeof CreateRoleZSchema>): Promise<number> {
-    const insertResult = await this.drizzleService.db
+    const insertResult = await db
       .insert(roleSchema)
       .values({
         name: body.name,
@@ -132,20 +131,20 @@ export class AuthService {
   }
 
   async getPermissions() {
-    return this.drizzleService.db.query.permissionSchema.findMany();
+    return db.query.permissionSchema.findMany();
   }
 
   async createUserRole() {
     this.drizzleService.db.insert(userRoleSchema).values({});
   }
   async createRolePermission() {
-    this.drizzleService.db.insert(rolePermissionSchema).values({});
+    db.insert(rolePermissionSchema).values({});
   }
 
   async createPermission(
     body: z.infer<typeof CreatePermissionZSchema>,
   ): Promise<number> {
-    const insertResult = await this.drizzleService.db
+    const insertResult = await db
       .insert(permissionSchema)
       .values({
         name: body.name,

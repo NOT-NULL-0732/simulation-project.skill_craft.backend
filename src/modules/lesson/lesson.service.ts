@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { DrizzleService } from '@/modules/drizzle/drizzle.service';
 import { z } from 'zod';
 import {
   createLessonZSchema,
@@ -12,16 +10,10 @@ import { lessonClassSchema, lessonSchema } from '@/db/schema/lesson.schema';
 import { IAuthenticatedUser } from '@/common/types/express';
 import { BusinessException } from '@/common/exception/business.exception';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
+import db from '@/db';
 
 @Injectable()
 export class LessonService {
-  db: NodePgDatabase<typeof import('../../db/schema/index.schema')>;
-
-  constructor(private readonly drizzleService: DrizzleService) {
-    const { db } = this.drizzleService;
-    this.db = db;
-  }
-
   /*
    * 筛选器
    *
@@ -32,13 +24,13 @@ export class LessonService {
     body: z.infer<typeof getLessonListZSchema>,
   ) {
     if (body.type === 'MY_CREATE_LESSON') {
-      return this.db.query.lessonClassSchema.findMany({
+      return db.query.lessonClassSchema.findMany({
         with: {
           lesson: true,
         },
         where: (lessonClass, { eq, and, exists }) =>
           exists(
-            this.db
+            db
               .select()
               .from(lessonSchema)
               .where(
@@ -50,7 +42,7 @@ export class LessonService {
           ),
       });
     } else if (body.type === 'MY_JOIN_LESSON') {
-      return this.db.query.lessonClassSchema.findMany({
+      return db.query.lessonClassSchema.findMany({
         where: eq(lessonClassSchema.user_id, user.userId),
         with: {
           lesson: true,
@@ -65,14 +57,14 @@ export class LessonService {
     user: IAuthenticatedUser,
     body: z.infer<typeof createLessonZSchema>,
   ) {
-    const result = await this.db
+    const result = await db
       .insert(lessonSchema)
       .values({
         name: body.lesson_name,
         created_by: user.userId,
       })
       .returning();
-    await this.db.insert(lessonClassSchema).values({
+    await db.insert(lessonClassSchema).values({
       user_id: user.userId,
       lesson_id: result[0].id,
     });
@@ -82,12 +74,12 @@ export class LessonService {
     user: IAuthenticatedUser,
     body: z.infer<typeof joinLessonZSchema>,
   ) {
-    const hasLesson = this.db.query.lessonClassSchema.findFirst({
+    const hasLesson = db.query.lessonClassSchema.findFirst({
       where: eq(lessonClassSchema.lesson_id, body.lesson_id),
     });
     if (!hasLesson)
       throw new BusinessException(ResponseStatusCode.LESSON__LESSON_NOTFOUND);
-    const insertResults = await this.db
+    const insertResults = await db
       .insert(lessonClassSchema)
       .values({
         user_id: user.userId,
