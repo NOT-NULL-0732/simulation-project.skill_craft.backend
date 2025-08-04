@@ -26,8 +26,7 @@ export const StatusMessage: Record<ResponseStatusCode, string> = {
   [ResponseStatusCode.COMMON_INSERT_UNIQUE_ERROR]: '唯一索引',
   [ResponseStatusCode.AUTH__TOKEN_DATE_ERROR]: '令牌过期',
   [ResponseStatusCode.AUTH__ROLE_IDENTIFICATION_REPEAT_ERROR]: '角色标识符重复',
-  [ResponseStatusCode.AUTH__PERMISSION_IDENTIFICATION_REPEAT_ERROR]:
-    '权限标识符重复',
+  [ResponseStatusCode.AUTH__PERMISSION_IDENTIFICATION_REPEAT_ERROR]: '权限标识符重复',
   // 3000 ~ 3001 课程模块相关
   [ResponseStatusCode.LESSON__LESSON_NOTFOUND]: '课程不存在',
   [ResponseStatusCode.LESSON__REPEAT_JOIN_LESSON]: '重复加入课程',
