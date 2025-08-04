@@ -7,6 +7,7 @@ import { BusinessException } from '@/common/exception/business.exception';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
 import {
   CreatePermissionZSchema,
+  CreateRolePermissionZSchema,
   CreateRoleZSchema,
   CreateUserRoleZSchema,
   LoginZSchema,
@@ -134,11 +135,37 @@ export class AuthService {
     return db.query.permissionSchema.findMany();
   }
 
-  async createUserRole() {
-    this.drizzleService.db.insert(userRoleSchema).values({});
+  async createUserRole(body: z.infer<typeof CreateUserRoleZSchema>) {
+    const insertResult = await db
+      .insert(userRoleSchema)
+      .values({
+        ...body,
+      })
+      .onConflictDoNothing({
+        target: [userRoleSchema.user_id, userRoleSchema.role_id],
+      });
+    if (insertResult.rowCount === 0)
+      throw new BusinessException(
+        ResponseStatusCode.AUTH__REPEAT_ADD_ROLE_WITH_USER_ERROR,
+      );
   }
-  async createRolePermission() {
-    db.insert(rolePermissionSchema).values({});
+
+  async createRolePermission(
+    body: z.infer<typeof CreateRolePermissionZSchema>,
+  ) {
+    const insertResult = await db
+      .insert(rolePermissionSchema)
+      .values({ ...body })
+      .onConflictDoNothing({
+        target: [
+          rolePermissionSchema.role_id,
+          rolePermissionSchema.permission_id,
+        ],
+      });
+    if (insertResult.rowCount === 0)
+      throw new BusinessException(
+        ResponseStatusCode.AUTH__REPEAT_ADD_PERMISSION_WITH_ROLE_ERROR,
+      );
   }
 
   async createPermission(

@@ -6,7 +6,9 @@ import { createResponse } from '@/common/utils/create-response';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
 import {
   CreatePermissionZSchema,
+  CreateRolePermissionZSchema,
   CreateRoleZSchema,
+  CreateUserRoleZSchema,
   LoginZSchema,
   RegisterZSchema,
 } from '@/modules/auth/auth.z-schema';
@@ -62,7 +64,13 @@ export class AuthController {
   }
 
   @Post('user-role')
-  async createUserRole() {}
+  async createUserRole(
+    @Body(new ZodValidationPipe(CreateUserRoleZSchema))
+    body: z.infer<typeof CreateUserRoleZSchema>,
+  ) {
+    await this.authService.createUserRole(body);
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
+  }
 
   @Get('permission')
   async getPermissions() {
@@ -83,5 +91,11 @@ export class AuthController {
   }
 
   @Post('role-permission')
-  async createRolePermission() {}
+  async createRolePermission(
+    @Body(new ZodValidationPipe(CreateRolePermissionZSchema))
+    body: z.infer<typeof CreateRolePermissionZSchema>,
+  ) {
+    await this.authService.createRolePermission(body);
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
+  }
 }

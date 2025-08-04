@@ -20,3 +20,11 @@ export const CreatePermissionZSchema = z.object({
   permission_key: string().nonempty().min(2).max(40),
   description: string().nullable(),
 });
+export const CreateUserRoleZSchema = z.object({
+  user_id: z.coerce.number(),
+  role_id: z.coerce.number(),
+});
+export const CreateRolePermissionZSchema = z.object({
+  role_id: z.coerce.number(),
+  permission_id: z.coerce.number(),
+});
