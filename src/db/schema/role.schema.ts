@@ -1,6 +1,6 @@
 import { integer, pgTable, unique, varchar } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { permissionSchema } from '@/db/schema/permission.schema';
+import { rolePermissionSchema } from '@/db/schema/role-permission.schema';
 
 export const roleSchema = pgTable(
   'role',
@@ -14,5 +14,5 @@ export const roleSchema = pgTable(
 );
 
 export const roleSchemaRelation = relations(roleSchema, ({ many }) => ({
-  permissions: many(permissionSchema),
+  permissions: many(rolePermissionSchema),
 }));

@@ -7,7 +7,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { lessonClassSchema, lessonSchema } from '@/db/schema/lesson.schema';
-import { roleSchema } from './role.schema';
+import { userRoleSchema } from '@/db/schema/user-role.schema';
 
 export const userSchema = pgTable('user', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -24,5 +24,5 @@ export const userSchema = pgTable('user', {
 export const userSchemaRelations = relations(userSchema, ({ many }) => ({
   created_lessons: many(lessonSchema),
   join_lessons: many(lessonClassSchema),
-  roles: many(roleSchema),
+  roles: many(userRoleSchema),
 }));
