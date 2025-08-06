@@ -1,7 +1,7 @@
 declare global {
-  namespace Express {
+   namespace Express {
     interface Request {
-      authenticatedUser: IAuthenticatedUser;
+      authenticatedUser?: IAuthenticatedUser;
     }
   }
 }
