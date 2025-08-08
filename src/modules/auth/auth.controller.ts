@@ -9,6 +9,8 @@ import {
   CreateRolePermissionZSchema,
   CreateRoleZSchema,
   CreateUserRoleZSchema,
+  DeleteRolePermissionZSchema,
+  DeleteUserRoleZSchema,
   LoginZSchema,
   RegisterZSchema,
 } from '@/modules/auth/auth.z-schema';
@@ -67,6 +69,16 @@ export class AuthController {
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 
+  @AuthPermission('AUTH:USER_ROLE:ADD')
+  @Post('user-role')
+  async deleteUserRole(
+    @Body(new ZodValidationPipe(DeleteUserRoleZSchema))
+    body: z.infer<typeof DeleteUserRoleZSchema>,
+  ) {
+    await this.authService.deleteUserRole(body);
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
+  }
+
   @AuthPermission('AUTH:PERMISSION:GET')
   @Get('permission')
   async getPermissions() {
@@ -94,6 +106,16 @@ export class AuthController {
     body: z.infer<typeof CreateRolePermissionZSchema>,
   ) {
     await this.authService.createRolePermission(body);
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
+  }
+
+  @AuthPermission('AUTH:ROLE_PERMISSION:DELETE')
+  @Post('role-permission')
+  async deleteRolePermission(
+    @Body(new ZodValidationPipe(DeleteRolePermissionZSchema))
+    body: z.infer<typeof DeleteRolePermissionZSchema>,
+  ) {
+    await this.authService.deleteRolePermission(body);
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 }

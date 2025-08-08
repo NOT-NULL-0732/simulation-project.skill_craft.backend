@@ -10,6 +10,8 @@ import {
   CreateRolePermissionZSchema,
   CreateRoleZSchema,
   CreateUserRoleZSchema,
+  DeleteRolePermissionZSchema,
+  DeleteUserRoleZSchema,
   LoginZSchema,
   RegisterZSchema,
 } from '@/modules/auth/auth.z-schema';
@@ -150,6 +152,17 @@ export class AuthService {
       );
   }
 
+  async deleteUserRole(body: z.infer<typeof DeleteUserRoleZSchema>) {
+    await db
+      .delete(userRoleSchema)
+      .where(
+        and(
+          eq(userRoleSchema.user_id, body.user_id),
+          eq(userRoleSchema.role_id, body.role_id),
+        ),
+      );
+  }
+
   async createRolePermission(
     body: z.infer<typeof CreateRolePermissionZSchema>,
   ) {
@@ -165,6 +178,19 @@ export class AuthService {
     if (insertResult.rowCount === 0)
       throw new BusinessException(
         ResponseStatusCode.AUTH__REPEAT_ADD_PERMISSION_WITH_ROLE_ERROR,
+      );
+  }
+
+  async deleteRolePermission(
+    body: z.infer<typeof DeleteRolePermissionZSchema>,
+  ) {
+    await db
+      .delete(rolePermissionSchema)
+      .where(
+        and(
+          eq(rolePermissionSchema.role_id, body.role_id),
+          eq(rolePermissionSchema.permission_id, body.permission_id),
+        ),
       );
   }
 

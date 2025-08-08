@@ -24,7 +24,15 @@ export const CreateUserRoleZSchema = z.object({
   user_id: z.coerce.number(),
   role_id: z.coerce.number(),
 });
+export const DeleteUserRoleZSchema = z.object({
+  user_id: z.coerce.number(),
+  role_id: z.coerce.number(),
+});
 export const CreateRolePermissionZSchema = z.object({
+  role_id: z.coerce.number(),
+  permission_id: z.coerce.number(),
+});
+export const DeleteRolePermissionZSchema = z.object({
   role_id: z.coerce.number(),
   permission_id: z.coerce.number(),
 });
