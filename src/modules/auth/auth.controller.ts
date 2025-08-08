@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from '@/modules/auth/auth.service';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { z } from 'zod';
@@ -12,13 +12,13 @@ import {
   LoginZSchema,
   RegisterZSchema,
 } from '@/modules/auth/auth.z-schema';
-import { AuthUser } from '@/common/decorator/auth-user.decorator';
-import { IAuthenticatedUser } from '@/common/types/express';
+import { AuthPermission } from '@/common/decorator/permission.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @AuthPermission('AUTH:USER:REGISTER', false)
   @Post('register')
   async register(
     @Body(new ZodValidationPipe(RegisterZSchema))
@@ -27,6 +27,7 @@ export class AuthController {
     await this.authService.register(body);
   }
 
+  @AuthPermission('AUTH:USER:LOGIN', false)
   @Post('login')
   async login(
     @Body(new ZodValidationPipe(LoginZSchema))
@@ -36,15 +37,7 @@ export class AuthController {
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS, loginResult);
   }
 
-  @Post('test-login')
-  async testLogin(
-    @AuthUser() user: IAuthenticatedUser,
-    @Request() req: Request,
-  ) {
-    Logger.verbose('验证成功');
-    console.log(user);
-  }
-
+  @AuthPermission('AUTH:ROLE:GET')
   @Get('role')
   async getRoles() {
     return createResponse(
@@ -53,6 +46,7 @@ export class AuthController {
     );
   }
 
+  @AuthPermission('AUTH:ROLE:ADD')
   @Post('role')
   async createRole(
     @Body(new ZodValidationPipe(CreateRoleZSchema))
@@ -63,6 +57,7 @@ export class AuthController {
     });
   }
 
+  @AuthPermission('AUTH:USER_ROLE:ADD')
   @Post('user-role')
   async createUserRole(
     @Body(new ZodValidationPipe(CreateUserRoleZSchema))
@@ -72,6 +67,7 @@ export class AuthController {
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 
+  @AuthPermission('AUTH:PERMISSION:GET')
   @Get('permission')
   async getPermissions() {
     return createResponse(
@@ -80,6 +76,7 @@ export class AuthController {
     );
   }
 
+  @AuthPermission('AUTH:PERMISSION:ADD')
   @Post('permission')
   async createPermission(
     @Body(new ZodValidationPipe(CreatePermissionZSchema))
@@ -90,6 +87,7 @@ export class AuthController {
     });
   }
 
+  @AuthPermission('AUTH:ROLE_PERMISSION:ADD')
   @Post('role-permission')
   async createRolePermission(
     @Body(new ZodValidationPipe(CreateRolePermissionZSchema))

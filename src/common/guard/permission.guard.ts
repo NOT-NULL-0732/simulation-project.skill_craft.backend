@@ -20,7 +20,7 @@ export class PermissionGuard implements CanActivate {
       'permission_key',
       context.getHandler(),
     );
-    if (!permission_key) return true;
+    if (permission_key === undefined) return true;
     const request = context.switchToHttp().getRequest<Request>();
 
     let permission_key_list: string[];
