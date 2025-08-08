@@ -31,7 +31,7 @@ export class PermissionGuard implements CanActivate {
           permission_key: permissionSchema.permission_key,
         })
         .from(userSchema)
-        .where(eq(userSchema.id, 1))
+        .where(eq(userSchema.id, request.authenticatedUser.userId))
         .leftJoin(userRoleSchema, eq(userSchema.id, userRoleSchema.user_id))
         .leftJoin(roleSchema, eq(roleSchema.id, userRoleSchema.role_id))
         .leftJoin(

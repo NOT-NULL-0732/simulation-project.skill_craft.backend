@@ -15,7 +15,9 @@ export class LoginGuard implements CanActivate {
     const ctx = context.switchToHttp();
     const request = ctx.getRequest<Request>();
     const authorization = request.headers['authorization'];
-    const userId = await this.authService.validateUserToken(authorization);
+    if (!authorization) return false;
+    const [_, token] = authorization.split('Bearer ');
+    const userId = await this.authService.validateUserToken(token);
     Logger.verbose('触发了验证');
     request.authenticatedUser = { userId };
     return true;
