@@ -46,6 +46,7 @@ async function run() {
       const GHOST_PERMISSION_LIST = [
         { permission_key: 'AUTH:USER:REGISTER', name: '注册' },
         { permission_key: 'AUTH:USER:LOGIN', name: '登录' },
+        { permission_key: 'COMMON:FILE:UPLOAD', name: '上传文件' },
       ];
       const ADMIN_PERMISSION_LIST = [
         { permission_key: 'AUTH:ROLE:GET', name: '获取角色' },

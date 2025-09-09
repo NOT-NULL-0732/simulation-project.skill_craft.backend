@@ -4,6 +4,7 @@ import { AppConfig } from '@/common/config/index.config';
 
 const db = drizzle({
   connection: AppConfig.db.connectionString,
+  logger: true,
   schema,
 });
 

@@ -12,3 +12,11 @@ export const createLessonZSchema = z.object({
 export const joinLessonZSchema = z.object({
   lesson_id: z.coerce.number(),
 });
+export const createLessonNodeZSchema = z.object({
+  name: z.string().min(2).max(30),
+  // video_url
+  position: z.object({
+    prev_node: z.coerce.number().nullable(),
+    next_node: z.coerce.number().nullable(),
+  }),
+});
