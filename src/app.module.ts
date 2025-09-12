@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
-import { LessonModule } from './modules/lesson/lesson.module';
+import { LessonModule } from '@/modules/course/course.module';
 import { FileModule } from './modules/file/file.module';
 import { RedisModule } from './modules/redis/redis.module';
 
