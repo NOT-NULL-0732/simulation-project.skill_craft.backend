@@ -1,11 +1,12 @@
-import { integer, pgTable, unique, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, unique, varchar } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { rolePermissionSchema } from '@/db/schema/role-permission.schema';
+import { uuidV7PrimaryKey } from '@/db/schema/common.schema';
 
 export const roleSchema = pgTable(
   'role',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: uuidV7PrimaryKey,
     role_key: varchar({ length: 40 }).notNull().unique(),
     name: varchar({ length: 20 }).notNull().unique(),
     description: varchar({ length: 200 }),

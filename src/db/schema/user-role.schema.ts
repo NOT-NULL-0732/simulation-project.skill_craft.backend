@@ -1,14 +1,15 @@
-import { integer, pgTable, unique } from 'drizzle-orm/pg-core';
+import { char, pgTable, unique } from 'drizzle-orm/pg-core';
 import { roleSchema } from '@/db/schema/role.schema';
 import { relations } from 'drizzle-orm';
 import { userSchema } from '@/db/schema/user.schema';
+import { uuidV7PrimaryKey } from '@/db/schema/common.schema';
 
 export const userRoleSchema = pgTable(
-  'userRole',
+  'user-role',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    user_id: integer(),
-    role_id: integer(),
+    id: uuidV7PrimaryKey,
+    user_id: char({ length: 36 }).references(() => userSchema.id),
+    role_id: char({ length: 36 }).references(() => roleSchema.id),
   },
   (t) => [unique().on(t.user_id, t.role_id)],
 );

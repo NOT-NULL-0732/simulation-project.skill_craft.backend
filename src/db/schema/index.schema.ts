@@ -5,3 +5,4 @@ export * from './permission.schema';
 export * from './role-permission.schema';
 export * from './lesson.schema';
 export * from './file.schema'
+export * from './common.schema'

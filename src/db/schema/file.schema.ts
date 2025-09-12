@@ -1,7 +1,6 @@
 import {
   boolean,
   char,
-  integer,
   pgTable,
   smallint,
   timestamp,
@@ -9,7 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { userSchema } from '@/db/schema/user.schema';
 import { relations } from 'drizzle-orm';
-import * as uuid from 'uuid';
+import { uuidV7PrimaryKey } from '@/db/schema/common.schema';
 
 export enum FileSchemaWithStatus {
   UNUSE = 0,
@@ -18,14 +17,12 @@ export enum FileSchemaWithStatus {
 }
 
 export const fileSchema = pgTable('upload-file', {
-  id: char({ length: 36 })
-    .primaryKey()
-    .$defaultFn(() => uuid.v7()),
+  id: uuidV7PrimaryKey,
   file_name: varchar({ length: 100 }).notNull(), // 文件名
   save_path: varchar({ length: 100 }).notNull(), // 保存路径（因全存在一个文件夹下 可能需要分日期保存）
   file_size: varchar({ length: 50 }).notNull(), // 文件大小
   consumer_service: varchar({ length: 20 }).notNull(), // 消费此文件的服务
-  uploaded_by: integer().references(() => userSchema.id), // 关联用户
+  uploaded_by: char({ length: 36 }).references(() => userSchema.id), // 关联用户
   is_delete: boolean().default(false).notNull(), // 文件是否已删除
   status: smallint().notNull(), // 0未使用 1已使用 2已废弃
   created_at: timestamp({ mode: 'string' }).defaultNow().notNull(),

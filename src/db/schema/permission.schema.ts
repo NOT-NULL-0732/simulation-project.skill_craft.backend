@@ -1,9 +1,10 @@
-import { integer, pgTable, unique, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, unique, varchar } from 'drizzle-orm/pg-core';
+import { uuidV7PrimaryKey } from '@/db/schema/common.schema';
 
 export const permissionSchema = pgTable(
   'permission',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    id: uuidV7PrimaryKey,
     permission_key: varchar({ length: 40 }).notNull().unique(),
     name: varchar({ length: 20 }).notNull().unique(),
     description: varchar({ length: 200 }),

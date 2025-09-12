@@ -1,25 +1,31 @@
 import db from '@/db';
 import {
-  lessonClassSchema,
-  lessonNodeSchema,
-  lessonSchema,
-} from '@/db/schema/lesson.schema';
-import { permissionSchema } from '@/db/schema/permission.schema';
-import { roleSchema } from '@/db/schema/role.schema';
-import { rolePermissionSchema } from '@/db/schema/role-permission.schema';
-import { userRoleSchema } from '@/db/schema/user-role.schema';
-import { userSchema } from '@/db/schema/user.schema';
+  courseClassSchema,
+  courseClassStudentSchema,
+  courseLessonNodeResourceSchema,
+  courseLessonSchema,
+  courseSchema,
+  fileSchema,
+  permissionSchema,
+  rolePermissionSchema,
+  roleSchema,
+  userRoleSchema,
+  userSchema,
+} from '@/db/schema/index.schema';
 
 async function run() {
   console.log('-> 清除数据库中...');
-  await db.delete(lessonSchema);
-  await db.delete(lessonNodeSchema);
-  await db.delete(lessonClassSchema);
-  await db.delete(permissionSchema);
+  await db.delete(userSchema);
+  await db.delete(userRoleSchema);
   await db.delete(roleSchema);
   await db.delete(rolePermissionSchema);
-  await db.delete(userRoleSchema);
-  await db.delete(userSchema);
+  await db.delete(permissionSchema);
+  await db.delete(courseClassSchema);
+  await db.delete(courseClassStudentSchema);
+  await db.delete(courseLessonSchema);
+  await db.delete(courseSchema);
+  await db.delete(courseLessonNodeResourceSchema);
+  await db.delete(fileSchema);
 }
 
 (async () => {
