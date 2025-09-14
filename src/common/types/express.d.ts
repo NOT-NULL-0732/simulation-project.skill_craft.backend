@@ -7,5 +7,5 @@ declare global {
 }
 
 export interface IAuthenticatedUser {
-  userId: number;
+  userId: string;
 }

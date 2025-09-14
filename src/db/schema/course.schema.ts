@@ -2,12 +2,16 @@ import { char, integer, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { uuidV7PrimaryKey } from '@/db/schema/common.schema';
 import { userSchema } from '@/db/schema/user.schema';
+import { fileSchema } from '@/db/schema/file.schema';
 
 // 课程
 export const courseSchema = pgTable('course', {
   id: uuidV7PrimaryKey,
   name: varchar({ length: 30 }).notNull(),
-  cover_url: varchar({ length: 200 }).notNull(), // 封面文件路径
+  created_by: char({ length: 36 })
+    .references(() => userSchema.id)
+    .notNull(),
+  cover_image: char({ length: 36 }).references(() => fileSchema.id),
 });
 
 export const courseSchemaRelations = relations(courseSchema, ({ many }) => ({

@@ -17,6 +17,8 @@ import { AuthUser } from '@/common/decorator/auth-user.decorator';
 import { IAuthenticatedUser } from '@/common/types/express';
 import { FileService } from '@/modules/file/file.service';
 import { Request } from 'express';
+import { createResponse } from '@/common/utils/create-response';
+import { ResponseStatusCode } from '@/common/types/response-status.enum';
 
 @Controller('file')
 export class FileController {
@@ -38,6 +40,14 @@ export class FileController {
     @Req() req: Request,
   ) {
     if (req.ip === undefined) throw new UnauthorizedException('未知IP请求');
-    return this.fileService.uploadFile(body, files, user, req.ip);
+    const fileServiceResult = await this.fileService.uploadFile(
+      body,
+      files,
+      user,
+      req.ip,
+    );
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS, {
+      files_key: fileServiceResult,
+    });
   }
 }

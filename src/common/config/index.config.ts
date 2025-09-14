@@ -9,4 +9,7 @@ export const AppConfig = {
       return `postgres://${this.user}:${this.password}@${this.host}:${this.port}/${this.database}`;
     },
   },
+  crypto: {
+    key: Buffer.from("b0eb16bade17274dcb27326ba7c78b32f3779738975ae8f415c5b09ee0495c26", "hex"),
+  }
 };

@@ -21,18 +21,18 @@ export const CreatePermissionZSchema = z.object({
   description: string().nullable(),
 });
 export const CreateUserRoleZSchema = z.object({
-  user_id: z.coerce.number(),
-  role_id: z.coerce.number(),
+  user_id: z.coerce.string(),
+  role_id: z.coerce.string(),
 });
 export const DeleteUserRoleZSchema = z.object({
-  user_id: z.coerce.number(),
-  role_id: z.coerce.number(),
+  user_id: z.coerce.string(),
+  role_id: z.coerce.string(),
 });
 export const CreateRolePermissionZSchema = z.object({
-  role_id: z.coerce.number(),
-  permission_id: z.coerce.number(),
+  role_id: z.coerce.string(),
+  permission_id: z.coerce.string(),
 });
 export const DeleteRolePermissionZSchema = z.object({
-  role_id: z.coerce.number(),
-  permission_id: z.coerce.number(),
+  role_id: z.coerce.string(),
+  permission_id: z.coerce.string(),
 });

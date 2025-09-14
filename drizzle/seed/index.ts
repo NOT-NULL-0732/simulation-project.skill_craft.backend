@@ -5,9 +5,11 @@ import { userRoleSchema } from '@/db/schema/user-role.schema';
 import { AuthService } from '@/modules/auth/auth.service';
 import { permissionSchema } from '@/db/schema/permission.schema';
 import { rolePermissionSchema } from '@/db/schema/role-permission.schema';
+import { CryptoService } from '@/modules/crypto/crypto.service';
 
 async function run() {
-  const authServer = new AuthService();
+  const cryptoService = new CryptoService();
+  const authServer = new AuthService(cryptoService);
   const defaultPassword = '12345678';
   try {
     console.log('-> 初始化数据库中...');
@@ -61,6 +63,9 @@ async function run() {
         { permission_key: 'AUTH:USER_ROLE:DELETE', name: '删除用户角色' },
         { permission_key: 'AUTH:ROLE_PERMISSION:ADD', name: '添加角色权限' },
         { permission_key: 'AUTH:ROLE_PERMISSION:DELETE', name: '删除角色权限' },
+        { permission_key: 'COURSE:COURSE:CREATE', name: '创建课程' },
+        { permission_key: 'COURSE:COURSE:UPDATE', name: '更新课程' },
+        { permission_key: 'COURSE:COURSE:DELETE', name: '删除课程' },
       ];
 
       const insertGhostPermissionResult = await t

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BusinessException } from '@/common/exception/business.exception';
 import {
   FILE_CONFIG,
@@ -7,7 +7,7 @@ import {
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
 import db from '@/db';
 import { fileSchema, FileSchemaWithStatus } from '@/db/schema/file.schema';
-import path from 'path';
+import * as path from 'path';
 import * as uuid from 'uuid';
 import { z } from 'zod';
 import { UploadFileZSchema } from '@/modules/file/file.z-schema';
@@ -16,6 +16,7 @@ import { mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
 import { RedisService } from '@/modules/redis/redis.service';
 import { RedisAccessFileData } from '@/modules/file/file.type';
+import { inArray } from 'drizzle-orm/sql/expressions/conditions';
 
 @Injectable()
 export class FileService {
@@ -96,14 +97,23 @@ export class FileService {
     return accessKey;
   }
 
-  public async getFiles(accessKey: string, userIP: string) {
-    const stringData = await this.redisService.redis.getex(
-      `service:file:access:${accessKey}`,
-    );
-    if (!stringData) throw Error('过期了');
+  public async getFiles(accessKey: string, userIP: string | undefined) {
+    const redisKey = `service:file:access:${accessKey}`;
+    const stringData = await this.redisService.redis.getex(redisKey);
+    await this.redisService.redis.del(redisKey);
+    if (!stringData)
+      throw new BusinessException(
+        ResponseStatusCode.UPLOAD_FILE__NOT_FOUND_REDIS,
+      );
     const jsonData = JSON.parse(stringData) as RedisAccessFileData;
     if (jsonData.userIp !== userIP)
-      throw new UnauthorizedException('你为什么要偷别人的文件！！！');
-    return jsonData;
+      throw new BusinessException(
+        ResponseStatusCode.UPLOAD_FILE__UPLOADER_VALIDATE_ERROR,
+      );
+    return await db
+      .select()
+      .from(fileSchema)
+      .where(inArray(fileSchema.id, jsonData.fileIds))
+      .execute();
   }
 }

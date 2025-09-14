@@ -22,9 +22,13 @@ import { permissionSchema } from '@/db/schema/permission.schema';
 import { userRoleSchema } from '@/db/schema/user-role.schema';
 import { rolePermissionSchema } from '@/db/schema/role-permission.schema';
 import db from '@/db';
+import { CryptoService } from '@/modules/crypto/crypto.service';
+import { LoginTokenData } from '@/modules/auth/auth.type';
 
 @Injectable()
 export class AuthService {
+  constructor(private readonly cryptoService: CryptoService) {}
+
   _hashPassword(password: string): string {
     return crypto.createHash('sha256').update(password).digest('hex');
   }
@@ -55,7 +59,7 @@ export class AuthService {
     });
     if (!user)
       throw new BusinessException(ResponseStatusCode.AUTH__PASSWORD_ERROR);
-    const user_token = this._genRandomToken(user.id, new Date());
+    const user_token = this._genRandomToken(user.id, Date.now());
     const updatedUsers = await db
       .update(userSchema)
       .set({ user_token })
@@ -69,37 +73,22 @@ export class AuthService {
     };
   }
 
-  async validateUserToken(userToken?: string): Promise<number> {
+  async validateUserToken(userToken?: string): Promise<string> {
     if (!userToken)
       throw new BusinessException(
         ResponseStatusCode.AUTH__TOKEN_VALIDATOR_ERROR,
       );
-    const [dateTime, userId, token] = userToken.split('-');
-
-    const parseDateTime = z.coerce.date().safeParse(new Date(Number(dateTime)));
-    const parseUserId = z.coerce.number().safeParse(userId);
-    const parseToken = z.coerce.string().safeParse(token);
-
-    if (!parseDateTime.success || !parseUserId.success || !parseToken.success)
-      throw new BusinessException(
-        ResponseStatusCode.AUTH__TOKEN_VALIDATOR_ERROR,
-      );
+    const { userId, signDate } = JSON.parse(
+      this.cryptoService.decrypted(userToken),
+    ) as LoginTokenData;
+    console.log(signDate, typeof signDate);
 
     // 计算过期;
-    if (Date.now() - parseDateTime.data.getTime() > 1000 * 60 * 60 * 24 * 7)
+    if (Date.now() - signDate > 1000 * 60 * 60 * 24 * 7)
       throw new BusinessException(ResponseStatusCode.AUTH__TOKEN_DATE_ERROR);
-    if (
-      !(
-        this._genRandomToken(parseUserId.data, parseDateTime.data) === userToken
-      )
-    )
-      throw new BusinessException(
-        ResponseStatusCode.AUTH__TOKEN_VALIDATOR_ERROR,
-      );
-
     const findResult = await db.query.userSchema.findFirst({
       where: and(
-        eq(userSchema.id, parseUserId.data),
+        eq(userSchema.id, userId),
         eq(userSchema.user_token, userToken),
       ),
     });
@@ -107,14 +96,14 @@ export class AuthService {
       throw new BusinessException(
         ResponseStatusCode.AUTH__TOKEN_VALIDATOR_ERROR,
       );
-    return parseUserId.data;
+    return userId;
   }
 
   async getRoles() {
     return db.query.roleSchema.findMany();
   }
 
-  async createRole(body: z.infer<typeof CreateRoleZSchema>): Promise<number> {
+  async createRole(body: z.infer<typeof CreateRoleZSchema>): Promise<string> {
     const insertResult = await db
       .insert(roleSchema)
       .values({
@@ -196,7 +185,7 @@ export class AuthService {
 
   async createPermission(
     body: z.infer<typeof CreatePermissionZSchema>,
-  ): Promise<number> {
+  ): Promise<string> {
     const insertResult = await db
       .insert(permissionSchema)
       .values({
@@ -215,14 +204,12 @@ export class AuthService {
     return insertResult[0].id;
   }
 
-  private _genRandomToken(userId: number, date: Date) {
-    const key = crypto.createHash('sha256');
-    const signDate = date.getTime().toString();
-    key.update(signDate);
-    key.update(userId.toString());
-    key.update(
-      '8X^%pl$FKof5kYmQJSJ&&ao#!k4V*i5u#u^!6q@57!3u0$180yk7h^#46$kdi&5wc6N5ZLZUh!E@ic*Dk18&H5t%P@oM&YilhcYe',
+  private _genRandomToken(userId: string, date: number) {
+    return this.cryptoService.encrypted(
+      JSON.stringify({
+        userId,
+        signDate: date,
+      } as LoginTokenData),
     );
-    return signDate + '-' + userId.toString() + '-' + key.digest('hex');
   }
 }
