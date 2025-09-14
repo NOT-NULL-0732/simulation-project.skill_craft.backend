@@ -2,7 +2,7 @@ import db from '@/db';
 import {
   courseClassSchema,
   courseClassStudentSchema,
-  courseLessonNodeResourceSchema,
+  courseLessonResourceSchema,
   courseLessonSchema,
   courseSchema,
   fileSchema,
@@ -15,17 +15,19 @@ import {
 
 async function run() {
   console.log('-> 清除数据库中...');
-  await db.delete(userSchema);
-  await db.delete(userRoleSchema);
-  await db.delete(roleSchema);
-  await db.delete(rolePermissionSchema);
-  await db.delete(permissionSchema);
-  await db.delete(courseClassSchema);
-  await db.delete(courseClassStudentSchema);
-  await db.delete(courseLessonSchema);
-  await db.delete(courseSchema);
-  await db.delete(courseLessonNodeResourceSchema);
-  await db.delete(fileSchema);
+  await db.transaction(async (tx) => {
+    await tx.delete(fileSchema);
+    await tx.delete(courseLessonResourceSchema);
+    await tx.delete(courseLessonSchema);
+    await tx.delete(courseClassStudentSchema);
+    await tx.delete(courseClassSchema);
+    await tx.delete(courseSchema);
+    await tx.delete(rolePermissionSchema);
+    await tx.delete(userRoleSchema);
+    await tx.delete(permissionSchema);
+    await tx.delete(roleSchema);
+    await tx.delete(userSchema);
+  });
 }
 
 (async () => {

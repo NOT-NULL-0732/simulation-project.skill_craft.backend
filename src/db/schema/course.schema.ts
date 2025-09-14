@@ -44,7 +44,7 @@ export const courseLessonSchemaRelations = relations(
 );
 
 // 课程节点资源
-export const courseLessonNodeResourceSchema = pgTable(
+export const courseLessonResourceSchema = pgTable(
   'course-lesson-node-resource',
   {
     id: uuidV7PrimaryKey,
@@ -56,11 +56,11 @@ export const courseLessonNodeResourceSchema = pgTable(
   },
 );
 
-export const courseLessonNodeResourceSchemaRelations = relations(
-  courseLessonNodeResourceSchema,
+export const courseLessonResourceSchemaRelations = relations(
+  courseLessonResourceSchema,
   ({ one }) => ({
     course_lesson: one(courseLessonSchema, {
-      fields: [courseLessonNodeResourceSchema.course_lesson_id],
+      fields: [courseLessonResourceSchema.course_lesson_id],
       references: [courseLessonSchema.id],
     }),
   }),
