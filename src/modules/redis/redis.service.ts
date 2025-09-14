@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
+import { AppConfig } from '@/common/config/index.config';
 
 @Injectable()
 export class RedisService {
@@ -7,9 +8,9 @@ export class RedisService {
 
   constructor() {
     this.redis = new Redis({
-      port: 6379,
-      host: '192.168.1.51',
-      password: 'redis_3tASHP',
+      port: AppConfig.redis.port,
+      host: AppConfig.redis.host,
+      password: AppConfig.redis.password,
     });
     this.redis.on('connect', () => {
       Logger.verbose('Redis已连接');
