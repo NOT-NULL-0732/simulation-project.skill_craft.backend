@@ -95,6 +95,7 @@ async function run() {
         { permission_key: 'AUTH:USER:DELETE', name: '删除用户' },
         { permission_key: 'AUTH:USER:UPDATE', name: '更改用户' },
         { permission_key: 'AUTH:USER:LIST', name: '查询用户' },
+        { permission_key: 'AUTH:ROLE:LIST', name: '查询角色' },
         { permission_key: 'AUTH:USER_ROLE:CREATE', name: '添加用户的角色' },
         { permission_key: 'AUTH:USER_ROLE:DELETE', name: '删除用户的角色' },
         { permission_key: 'AUTH:USER_ROLE:LIST', name: '查询用户的角色' },

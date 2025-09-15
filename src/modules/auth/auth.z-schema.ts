@@ -25,3 +25,17 @@ export const UserZSchema = {
     }),
   },
 };
+
+export const UserRoleZSchema = {
+  create: {
+    body: z.object({
+      user_id: z.string().uuid(),
+      role_id: z.string().uuid(),
+    }),
+  },
+  delete: {
+    params: z.object({
+      userRoleId: z.string().uuid(),
+    }),
+  },
+};

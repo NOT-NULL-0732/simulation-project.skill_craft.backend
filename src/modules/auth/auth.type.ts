@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { LoginZSchema, UserZSchema } from '@/modules/auth/auth.z-schema';
+import {
+  LoginZSchema,
+  UserRoleZSchema,
+  UserZSchema,
+} from '@/modules/auth/auth.z-schema';
 
 export interface LoginTokenData {
   userId: string;
@@ -14,6 +18,14 @@ export type TypeControllerAuth = {
     };
     delete: {
       params: z.infer<(typeof UserZSchema)['delete']['params']>;
+    };
+  };
+  userRole: {
+    create: {
+      body: z.infer<(typeof UserRoleZSchema)['create']['body']>;
+    };
+    delete: {
+      params: z.infer<(typeof UserRoleZSchema)['delete']['params']>;
     };
   };
 };
@@ -31,6 +43,15 @@ export type TypeServiceAuth = {
     };
     delete: {
       userId: string;
+    };
+  };
+  userRole: {
+    create: {
+      userId: string;
+      roleId: string;
+    };
+    delete: {
+      userRoleId: string;
     };
   };
 };

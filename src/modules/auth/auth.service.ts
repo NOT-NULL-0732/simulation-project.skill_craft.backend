@@ -7,6 +7,8 @@ import { ResponseStatusCode } from '@/common/types/response-status.enum';
 import db from '@/db';
 import { CryptoService } from '@/modules/crypto/crypto.service';
 import { LoginTokenData, TypeServiceAuth } from '@/modules/auth/auth.type';
+import { roleSchema } from '@/db/schema/role.schema';
+import { userRoleSchema } from '@/db/schema/user-role.schema';
 
 @Injectable()
 export class AuthService {
@@ -57,6 +59,48 @@ export class AuthService {
 
   async deleteUser(data: TypeServiceAuth['user']['delete']) {
     await db.delete(userSchema).where(eq(userSchema.id, data.userId)).execute();
+  }
+
+  async listUser() {
+    return await db
+      .select({
+        userId: userSchema.id,
+        userUsername: userSchema.username,
+        userCreatedAt: userSchema.created_at,
+        role: {
+          id: roleSchema.id,
+          name: roleSchema.name,
+        },
+      })
+      .from(userSchema)
+      .innerJoin(userRoleSchema, eq(userRoleSchema.user_id, userSchema.id))
+      .innerJoin(roleSchema, eq(roleSchema.id, userRoleSchema.role_id))
+      .execute();
+  }
+
+  async listRole() {
+    return await db
+      .select({
+        id: roleSchema.id,
+        key: roleSchema.role_key,
+        name: roleSchema.name,
+        description: roleSchema.description,
+      })
+      .from(roleSchema)
+      .execute();
+  }
+
+  async createUserRole(data: TypeServiceAuth['userRole']['create']) {
+    await db.insert(userRoleSchema).values({
+      user_id: data.userId,
+      role_id: data.roleId,
+    });
+  }
+
+  async deleteUserRole(data: TypeServiceAuth['userRole']['delete']) {
+    await db
+      .delete(userRoleSchema)
+      .where(eq(userRoleSchema.id, data.userRoleId));
   }
 
   async validateUserToken(userToken?: string): Promise<string> {
