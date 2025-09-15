@@ -1,7 +1,6 @@
 // Key => FileDirectory
-export type UPLOAD_FILE_SERVICE_KEY = [
-  'course__course_cover_image',
-];
+export const UPLOAD_FILE_SERVICE_LIST = ['course__course_cover_image'] as const;
+export type UPLOAD_FILE_SERVICE_KEY = (typeof UPLOAD_FILE_SERVICE_LIST)[number];
 
 export enum SIZE_UNIT {
   B = 1,
@@ -14,6 +13,7 @@ export enum SIZE_UNIT {
 export interface UPLOAD_FILE_SERVICE_CONFIG {
   maxSize: number;
   limit: number;
+  savePath: string
 }
 
 export const FILE_CONFIG: Record<
@@ -23,5 +23,6 @@ export const FILE_CONFIG: Record<
   course__course_cover_image: {
     limit: 1,
     maxSize: 300 * SIZE_UNIT.MB,
+    savePath: 'course'
   },
 };

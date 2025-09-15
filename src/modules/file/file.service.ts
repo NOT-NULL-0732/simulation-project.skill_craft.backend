@@ -41,7 +41,7 @@ export class FileService {
         );
     });
     // 保存文件
-    const savePath = UPLOAD_FILE_SERVICE_KEY[body.service];
+    const savePath = FILE_CONFIG[body.service].savePath;
     const filesUUID = await db.transaction(async (tx) => {
       return Promise.all(
         files.map(async (file) => {
@@ -79,10 +79,14 @@ export class FileService {
       );
     });
 
-    return this.setFilesWithRedis(filesUUID, userIP);
+    return this.setFilesWithRedis(filesUUID, userIP, body.service);
   }
 
-  public async setFilesWithRedis(fileIds: string[], userIp: string) {
+  public async setFilesWithRedis(
+    fileIds: string[],
+    userIp: string,
+    service: UPLOAD_FILE_SERVICE_KEY,
+  ) {
     const accessKey = uuid.v4();
     const compositeValue = JSON.stringify({
       userIp,
@@ -90,15 +94,19 @@ export class FileService {
     } as RedisAccessFileData);
 
     await this.redisService.redis.setex(
-      `service:file:access:${accessKey}`,
+      `service:file:access:${service}_${accessKey}`,
       1000,
       compositeValue,
     );
     return accessKey;
   }
 
-  public async getFiles(accessKey: string, userIP: string | undefined) {
-    const redisKey = `service:file:access:${accessKey}`;
+  public async getFiles(
+    accessKey: string,
+    service: UPLOAD_FILE_SERVICE_KEY,
+    userIP: string | undefined,
+  ) {
+    const redisKey = `service:file:access:${service}_${accessKey}`;
     const stringData = await this.redisService.redis.getex(redisKey);
     await this.redisService.redis.del(redisKey);
     if (!stringData)
