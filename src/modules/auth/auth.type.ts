@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { LoginZSchema } from '@/modules/auth/auth.z-schema';
+import { LoginZSchema, UserZSchema } from '@/modules/auth/auth.z-schema';
 
 export interface LoginTokenData {
   userId: string;
@@ -8,11 +8,29 @@ export interface LoginTokenData {
 
 export type TypeControllerAuth = {
   login: { body: z.infer<typeof LoginZSchema> };
+  user: {
+    create: {
+      body: z.infer<(typeof UserZSchema)['create']['body']>;
+    };
+    delete: {
+      params: z.infer<(typeof UserZSchema)['delete']['params']>;
+    };
+  };
 };
 
 export type TypeServiceAuth = {
   login: {
     password: string;
     email: string;
+  };
+  user: {
+    create: {
+      username: string;
+      password: string;
+      email: string;
+    };
+    delete: {
+      userId: string;
+    };
   };
 };

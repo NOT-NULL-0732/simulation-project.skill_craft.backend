@@ -19,7 +19,7 @@ async function run() {
       const [insertUserAdminResult] = await t
         .insert(userSchema)
         .values({
-          user_name: '超级管理员',
+          username: '超级管理员',
           email: 'admin@example.com',
           password: authServer._hashPassword(defaultPassword),
         })
@@ -27,7 +27,7 @@ async function run() {
       const [insertUserTeacherResult] = await t
         .insert(userSchema)
         .values({
-          user_name: '测试教师',
+          username: '测试教师',
           email: 'teacher@example.com',
           password: authServer._hashPassword(defaultPassword),
         })

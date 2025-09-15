@@ -1,9 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
 import { AuthService } from '@/modules/auth/auth.service';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { createResponse } from '@/common/utils/create-response';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
-import { LoginZSchema } from '@/modules/auth/auth.z-schema';
+import { LoginZSchema, UserZSchema } from '@/modules/auth/auth.z-schema';
 import { AuthPermission } from '@/common/decorator/permission.decorator';
 import { TypeControllerAuth } from '@/modules/auth/auth.type';
 
@@ -17,7 +17,42 @@ export class AuthController {
     @Body(new ZodValidationPipe(LoginZSchema))
     body: TypeControllerAuth['login']['body'],
   ) {
-    const loginResult = await this.authService.login(body);
-    return createResponse(ResponseStatusCode.REQUEST_SUCCESS, loginResult);
+    const loginResult = await this.authService.login({
+      email: body.email,
+      password: body.password,
+    });
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS, {
+      userId: loginResult.id,
+      username: loginResult.username,
+      user_token: loginResult.user_token,
+    });
+  }
+
+  @AuthPermission('AUTH:USER:CREATE')
+  @Post('user')
+  async createUser(
+    @Body(new ZodValidationPipe(UserZSchema.create.body))
+    body: TypeControllerAuth['user']['create']['body'],
+  ) {
+    const createUserResult = await this.authService.createUser({
+      email: body.email,
+      username: body.username,
+      password: body.password,
+    });
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS, {
+      userId: createUserResult.userId,
+    });
+  }
+
+  @AuthPermission('AUTH:USER:DELETE')
+  @Delete('user/:userId')
+  async deleteUser(
+    @Param(new ZodValidationPipe(UserZSchema['delete']['params']))
+    params: TypeControllerAuth['user']['delete']['params'],
+  ) {
+    await this.authService.deleteUser({
+      userId: params.userId,
+    });
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 }

@@ -34,9 +34,29 @@ export class AuthService {
     const updatedUser = updatedUsers[0];
     return {
       id: updatedUser.id,
-      user_name: updatedUser.user_name,
+      username: updatedUser.username,
       user_token: updatedUser.user_token,
     };
+  }
+
+  async createUser(data: TypeServiceAuth['user']['create']) {
+    // TODO 插入用户没有重复性插入的错误处理
+    const [insertUserResult] = await db
+      .insert(userSchema)
+      .values({
+        ...data,
+        password: this._hashPassword(data.password),
+      })
+      .returning({
+        id: userSchema.id,
+      });
+    return {
+      userId: insertUserResult.id,
+    };
+  }
+
+  async deleteUser(data: TypeServiceAuth['user']['delete']) {
+    await db.delete(userSchema).where(eq(userSchema.id, data.userId)).execute();
   }
 
   async validateUserToken(userToken?: string): Promise<string> {

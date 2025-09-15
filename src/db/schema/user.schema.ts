@@ -6,7 +6,7 @@ import { uuidV7PrimaryKey } from '@/db/schema/common.schema';
 export const userSchema = pgTable('user', {
   id: uuidV7PrimaryKey,
   email: varchar({ length: 50 }).notNull().unique(),
-  user_name: varchar({ length: 50 }).notNull(),
+  username: varchar({ length: 50 }).notNull(),
   password: varchar({ length: 200 }).notNull(),
   user_token: varchar({ length: 255 }),
   updated_at: timestamp({ mode: 'string' }).$onUpdateFn(() =>
