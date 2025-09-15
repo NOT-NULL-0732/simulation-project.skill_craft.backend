@@ -5,7 +5,7 @@ import { createResponse } from '@/common/utils/create-response';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
 import { LoginZSchema } from '@/modules/auth/auth.z-schema';
 import { AuthPermission } from '@/common/decorator/permission.decorator';
-import { TypeAuthController } from '@/modules/auth/auth.type';
+import { TypeControllerAuth } from '@/modules/auth/auth.type';
 
 @Controller('auth')
 export class AuthController {
@@ -15,7 +15,7 @@ export class AuthController {
   @Post('login')
   async login(
     @Body(new ZodValidationPipe(LoginZSchema))
-    body: TypeAuthController['login']['body'],
+    body: TypeControllerAuth['login']['body'],
   ) {
     const loginResult = await this.authService.login(body);
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS, loginResult);

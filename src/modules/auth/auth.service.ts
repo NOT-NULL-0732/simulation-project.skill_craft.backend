@@ -2,13 +2,11 @@ import { Injectable } from '@nestjs/common';
 import * as crypto from 'node:crypto';
 import { userSchema } from '@/db/schema/user.schema';
 import { and, eq } from 'drizzle-orm';
-import { z } from 'zod';
 import { BusinessException } from '@/common/exception/business.exception';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
-import { LoginZSchema } from '@/modules/auth/auth.z-schema';
 import db from '@/db';
 import { CryptoService } from '@/modules/crypto/crypto.service';
-import { LoginTokenData } from '@/modules/auth/auth.type';
+import { LoginTokenData, TypeServiceAuth } from '@/modules/auth/auth.type';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +16,7 @@ export class AuthService {
     return crypto.createHash('sha256').update(password).digest('hex');
   }
 
-  async login(data: z.infer<typeof LoginZSchema>) {
+  async login(data: TypeServiceAuth['login']) {
     const user = await db.query.userSchema.findFirst({
       where: and(
         eq(userSchema.email, data.email),
