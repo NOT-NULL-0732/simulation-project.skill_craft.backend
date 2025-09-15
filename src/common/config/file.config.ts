@@ -1,7 +1,7 @@
 // Key => FileDirectory
-export const UPLOAD_FILE_SERVICE_KEY = {
-  'COURSE_FILE_UPLOAD': 'course',
-} as const;
+export type UPLOAD_FILE_SERVICE_KEY = [
+  'course__course_cover_image',
+];
 
 export enum SIZE_UNIT {
   B = 1,
@@ -17,10 +17,10 @@ export interface UPLOAD_FILE_SERVICE_CONFIG {
 }
 
 export const FILE_CONFIG: Record<
-  keyof typeof UPLOAD_FILE_SERVICE_KEY,
+  UPLOAD_FILE_SERVICE_KEY[number],
   UPLOAD_FILE_SERVICE_CONFIG
 > = {
-  COURSE_FILE_UPLOAD: {
+  course__course_cover_image: {
     limit: 1,
     maxSize: 300 * SIZE_UNIT.MB,
   },
