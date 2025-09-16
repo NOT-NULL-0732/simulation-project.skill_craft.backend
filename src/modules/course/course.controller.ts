@@ -113,6 +113,11 @@ export class CourseController {
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 
+  @AuthPermission('COURSE:LESSON:LIST')
+  async listLesson() {
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
+  }
+
   @AuthPermission('COURSE:LESSON:CREATE')
   async createLesson() {
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
@@ -125,6 +130,11 @@ export class CourseController {
 
   @AuthPermission('COURSE:LESSON:DELETE')
   async deleteLesson() {
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
+  }
+
+  @AuthPermission('COURSE:LESSON_RESOURCE:LIST')
+  async listLessonResource() {
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 

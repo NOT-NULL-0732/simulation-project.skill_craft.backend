@@ -69,10 +69,14 @@ async function run() {
         { permission_key: 'COURSE:COURSE:UPDATE', name: '更改课程' },
         { permission_key: 'COURSE:COURSE:DELETE', name: '删除课程' },
         { permission_key: 'COURSE:COURSE:LIST', name: '查询课程' },
+        { permission_key: 'COURSE:LESSON:LIST', name: '查询课程节点' },
         { permission_key: 'COURSE:LESSON:CREATE', name: '添加课程节点' },
         { permission_key: 'COURSE:LESSON:DELETE', name: '删除课程节点' },
         { permission_key: 'COURSE:LESSON:UPDATE', name: '更改课程节点' },
-        { permission_key: 'COURSE:LESSON:LIST', name: '查询课程节点' },
+        {
+          permission_key: 'COURSE:LESSON_RESOURCE:LIST',
+          name: '查询课程节点资源',
+        },
         {
           permission_key: 'COURSE:LESSON_RESOURCE:CREATE',
           name: '添加课程节点资源',
@@ -84,10 +88,6 @@ async function run() {
         {
           permission_key: 'COURSE:LESSON_RESOURCE:UPDATE',
           name: '更改课程节点资源',
-        },
-        {
-          permission_key: 'COURSE:LESSON_RESOURCE:LIST',
-          name: '查询课程节点资源',
         },
       ];
       const ADMIN_PERMISSION_LIST = [

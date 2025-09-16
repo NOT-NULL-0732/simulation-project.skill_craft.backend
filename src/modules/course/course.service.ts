@@ -58,6 +58,10 @@ export class CourseService {
       );
   }
 
+  async listLesson(data: TypeServiceCourse['lesson']['list']) {
+    //
+  }
+
   async createLesson(data: TypeServiceCourse['lesson']['create']) {
     //
   }
@@ -73,6 +77,10 @@ export class CourseService {
   async createLessonResource(
     data: TypeServiceCourse['lessonResource']['create'],
   ) {
+    //
+  }
+
+  async listLessonResource(data: TypeServiceCourse['lessonResource']['list']) {
     //
   }
 

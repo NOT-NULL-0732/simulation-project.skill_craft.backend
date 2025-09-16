@@ -37,11 +37,13 @@ export type TypeServiceCourse = {
     };
   };
   lesson: {
+    list: {};
     create: {};
     update: {};
     delete: {};
   };
   lessonResource: {
+    list: {};
     create: {};
     update: {};
     delete: {};
