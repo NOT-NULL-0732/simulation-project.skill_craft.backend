@@ -21,7 +21,7 @@ export const fileSchema = pgTable('upload-file', {
   file_name: varchar({ length: 100 }).notNull(), // 文件名
   save_path: varchar({ length: 100 }).notNull(), // 保存路径（因全存在一个文件夹下 可能需要分日期保存）
   file_size: varchar({ length: 50 }).notNull(), // 文件大小
-  consumer_service: varchar({ length: 20 }).notNull(), // 消费此文件的服务
+  consumer_service: varchar({ length: 40 }).notNull(), // 消费此文件的服务
   uploaded_by: char({ length: 36 }).references(() => userSchema.id), // 关联用户
   is_delete: boolean().default(false).notNull(), // 文件是否已删除
   status: smallint().notNull(), // 0未使用 1已使用 2已废弃
