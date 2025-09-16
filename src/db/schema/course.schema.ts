@@ -1,4 +1,10 @@
-import { char, integer, pgTable, varchar } from 'drizzle-orm/pg-core';
+import {
+  AnyPgColumn,
+  char,
+  integer,
+  pgTable,
+  varchar,
+} from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { uuidV7PrimaryKey } from '@/db/schema/common.schema';
 import { userSchema } from '@/db/schema/user.schema';
@@ -25,7 +31,9 @@ export const courseLessonSchema = pgTable('course-lesson', {
   course_id: char({ length: 36 })
     .references(() => courseSchema.id)
     .notNull(),
-  parent_id: char({ length: 36 }).references(() => courseLessonSchema.id),
+  parent_id: char({ length: 36 })
+    .$type<string | null>()
+    .references((): AnyPgColumn => courseLessonSchema.id),
   order: integer().notNull(), // 课程同一父亲节点下的节点排序
 });
 
