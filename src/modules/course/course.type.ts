@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { CourseZSchema } from '@/modules/course/course.z-schema';
+import {
+  CourseLessonZSchema,
+  CourseZSchema,
+} from '@/modules/course/course.z-schema';
 
 export type TypeControllerCourse = {
   course: {
@@ -12,6 +15,15 @@ export type TypeControllerCourse = {
     };
     delete: {
       params: z.infer<typeof CourseZSchema.delete.params>;
+    };
+  };
+  courseLesson: {
+    list: {
+      params: z.infer<typeof CourseLessonZSchema.list.params>;
+    };
+    create: {
+      body: z.infer<typeof CourseLessonZSchema.create.body>;
+      params: z.infer<typeof CourseLessonZSchema.create.params>;
     };
   };
 };
@@ -37,8 +49,17 @@ export type TypeServiceCourse = {
     };
   };
   lesson: {
-    list: {};
-    create: {};
+    list: {
+      userId: string;
+      courseId: string;
+    };
+    create: {
+      userId: string;
+      lessonName: string;
+      courseId: string;
+      parentLessonId: string | undefined;
+      order: number;
+    };
     update: {};
     delete: {};
   };

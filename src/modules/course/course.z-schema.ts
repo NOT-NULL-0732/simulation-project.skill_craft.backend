@@ -3,6 +3,9 @@ import { z } from 'zod';
 export const CourseCommonZSchema = {
   course_id: z.string().uuid(),
   course_name: z.string().max(30),
+  course_lesson_id: z.string().uuid(),
+  course_lesson_name: z.string().max(20),
+  course_lesson_order: z.number().min(100).max(10000),
   course_class_id: z.string().uuid(),
   files_key: z.string(),
 };
@@ -38,7 +41,21 @@ export const CourseZSchema = {
   },
 };
 export const CourseLessonZSchema = {
-  create: {},
+  list: {
+    params: z.object({
+      courseId: CourseCommonZSchema.course_id,
+    }),
+  },
+  create: {
+    body: z.object({
+      name: CourseCommonZSchema.course_lesson_name,
+      order: CourseCommonZSchema.course_lesson_order,
+      parent_lesson_id: CourseCommonZSchema.course_lesson_id.optional(),
+    }),
+    params: z.object({
+      courseId: CourseCommonZSchema.course_id,
+    }),
+  },
   delete: {},
 };
 export const CourseLessonResourceZSchema = {

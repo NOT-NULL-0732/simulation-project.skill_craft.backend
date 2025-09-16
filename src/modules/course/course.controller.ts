@@ -13,7 +13,10 @@ import { CourseService } from '@/modules/course/course.service';
 import { FileService } from '@/modules/file/file.service';
 import { AuthPermission } from '@/common/decorator/permission.decorator';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { CourseZSchema } from '@/modules/course/course.z-schema';
+import {
+  CourseLessonZSchema,
+  CourseZSchema,
+} from '@/modules/course/course.z-schema';
 import { TypeControllerCourse } from '@/modules/course/course.type';
 import { createResponse } from '@/common/utils/create-response';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
@@ -114,12 +117,38 @@ export class CourseController {
   }
 
   @AuthPermission('COURSE:LESSON:LIST')
-  async listLesson() {
-    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
+  @Get('lesson/:courseId')
+  async listLesson(
+    @Param(new ZodValidationPipe(CourseLessonZSchema.list.params))
+    params: TypeControllerCourse['courseLesson']['list']['params'],
+    @AuthUser() user: IAuthenticatedUser,
+  ) {
+    const listLessonResults = await this.courseService.listLesson({
+      courseId: params.courseId,
+      userId: user.userId,
+    });
+    return createResponse(
+      ResponseStatusCode.REQUEST_SUCCESS,
+      listLessonResults,
+    );
   }
 
   @AuthPermission('COURSE:LESSON:CREATE')
-  async createLesson() {
+  @Post('lesson/:courseId')
+  async createLesson(
+    @Body(new ZodValidationPipe(CourseLessonZSchema.create.body))
+    body: TypeControllerCourse['courseLesson']['create']['body'],
+    @Param(new ZodValidationPipe(CourseLessonZSchema.create.params))
+    params: TypeControllerCourse['courseLesson']['create']['params'],
+    @AuthUser() user: IAuthenticatedUser,
+  ) {
+    await this.courseService.createLesson({
+      userId: user.userId,
+      lessonName: body.name,
+      courseId: params.courseId,
+      parentLessonId: body.parent_lesson_id,
+      order: body.order,
+    });
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 
