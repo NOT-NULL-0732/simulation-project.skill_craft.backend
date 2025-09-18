@@ -24,6 +24,16 @@ export const UserZSchema = {
       userId: z.string().uuid(),
     }),
   },
+  update: {
+    params: z.object({
+      userId: z.string().uuid(),
+    }),
+    body: z.object({
+      username: AuthCommonZSchema.username.optional(),
+      email: AuthCommonZSchema.email.optional(),
+      password: AuthCommonZSchema.password.optional(),
+    }),
+  },
 };
 
 export const UserRoleZSchema = {

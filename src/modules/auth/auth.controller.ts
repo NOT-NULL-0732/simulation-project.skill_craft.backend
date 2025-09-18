@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { AuthService } from '@/modules/auth/auth.service';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { createResponse } from '@/common/utils/create-response';
@@ -59,6 +67,23 @@ export class AuthController {
       userId: params.userId,
     });
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
+  }
+
+  @AuthPermission('AUTH:USER:UPDATE')
+  @Patch('user/:userId')
+  async updateUser(
+    @Param(new ZodValidationPipe(UserZSchema['update']['params']))
+    params: TypeControllerAuth['user']['update']['params'],
+    @Body(new ZodValidationPipe(UserZSchema['update']['body']))
+    body: TypeControllerAuth['user']['update']['body'],
+  ) {
+    await this.authService.updateUser({
+      userId: params.userId,
+      username: body.username,
+      email: body.email,
+      password: body.password,
+    });
+    createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 
   @AuthPermission('AUTH:USER:LIST')

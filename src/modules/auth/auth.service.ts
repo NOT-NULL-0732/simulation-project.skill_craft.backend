@@ -61,6 +61,17 @@ export class AuthService {
     await db.delete(userSchema).where(eq(userSchema.id, data.userId)).execute();
   }
 
+  async updateUser(data: TypeServiceAuth['user']['update']) {
+    await db
+      .update(userSchema)
+      .set({
+        email: data.email,
+        username: data.username,
+        password: data.password,
+      })
+      .where(eq(userSchema.id, data.userId));
+  }
+
   async listUser() {
     return await db
       .select({

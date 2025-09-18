@@ -19,6 +19,10 @@ export type TypeControllerAuth = {
     delete: {
       params: z.infer<(typeof UserZSchema)['delete']['params']>;
     };
+    update: {
+      params: z.infer<(typeof UserZSchema)['update']['params']>;
+      body: z.infer<(typeof UserZSchema)['update']['body']>;
+    };
   };
   userRole: {
     create: {
@@ -43,6 +47,12 @@ export type TypeServiceAuth = {
     };
     delete: {
       userId: string;
+    };
+    update: {
+      userId: string;
+      username: string | undefined;
+      email: string | undefined;
+      password: string | undefined;
     };
   };
   userRole: {
