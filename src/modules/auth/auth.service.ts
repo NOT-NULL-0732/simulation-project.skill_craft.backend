@@ -67,14 +67,15 @@ export class AuthService {
         userId: userSchema.id,
         userUsername: userSchema.username,
         userCreatedAt: userSchema.created_at,
+        userEmail: userSchema.email,
         role: {
           id: roleSchema.id,
           name: roleSchema.name,
         },
       })
       .from(userSchema)
-      .innerJoin(userRoleSchema, eq(userRoleSchema.user_id, userSchema.id))
-      .innerJoin(roleSchema, eq(roleSchema.id, userRoleSchema.role_id))
+      .leftJoin(userRoleSchema, eq(userRoleSchema.user_id, userSchema.id))
+      .leftJoin(roleSchema, eq(roleSchema.id, userRoleSchema.role_id))
       .execute();
   }
 
