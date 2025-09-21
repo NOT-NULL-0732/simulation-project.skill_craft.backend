@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CryptoService } from './modules/crypto/crypto.service';
 
@@ -10,15 +10,7 @@ export class AppController {
   ) {}
 
   @Get()
-  getHello(
-    @Query('enString') enString: string,
-    @Query('addString') addString: string,
-  ) {
-    const enData = this.cryptoService.encrypted(enString);
-    const deData = this.cryptoService.decrypted(enData + addString);
-    return {
-      enData,
-      deData,
-    };
+  getHello() {
+    return this.appService.getHello();
   }
 }
