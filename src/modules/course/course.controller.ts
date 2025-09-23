@@ -21,6 +21,7 @@ export class CourseController {
   ) {}
 
   @AuthPermission('COURSE:COURSE:CREATE')
+  @Post('course')
   async createCourse(
     @Body(CreateCourseResponseDtoPipe)
     body: CreateCourseRequestBodyDto,
