@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import db from '@/db';
 import { courseSchema } from '@/db/schema/course.schema';
 
+import { and, eq } from 'drizzle-orm';
+
 @Injectable()
 export class CourseService {
   async createCourse(data: {
@@ -19,8 +21,25 @@ export class CourseService {
       .returning();
     return insertCourseResult;
   }
-  async updateCourse() {
-    // implement
+
+  async updateCourse(data: {
+    courseId: string;
+    userId: string;
+    courseName?: string;
+    coverImageFileId?: string;
+  }): Promise<void> {
+    await db
+      .update(courseSchema)
+      .set({
+        name: data.courseName,
+        cover_image: data.coverImageFileId,
+      })
+      .where(
+        and(
+          eq(courseSchema.id, data.courseId),
+          eq(courseSchema.created_by, data.userId),
+        ),
+      );
   }
   async deleteCourse() {
     // implement

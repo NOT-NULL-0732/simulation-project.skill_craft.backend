@@ -1,4 +1,4 @@
-import { Body, Controller, Req } from '@nestjs/common';
+import { Body, Controller, Param, Patch, Post, Req } from '@nestjs/common';
 import { CourseService } from '@/modules/course/course.service';
 import { FileService } from '@/modules/file/file.service';
 import { AuthPermission } from '@/common/decorator/permission.decorator';
@@ -12,6 +12,12 @@ import type { Request } from 'express';
 import { createResponse } from '@/common/utils/create-response';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
 import { createCourseResponseDto } from '@/modules/course/dto/response/create-course.response.dto';
+import {
+  UpdateCourseRequestParamsDto,
+  UpdateCourseResponseBodyDto,
+  UpdateCourseResponseDtoPipe,
+  UpdateCourseResponseParamsDtoPipe,
+} from '@/modules/course/dto/request/update-course.request.dto';
 
 @Controller('course')
 export class CourseController {
@@ -47,9 +53,32 @@ export class CourseController {
   }
 
   @AuthPermission('COURSE:COURSE:UPDATE')
-  async updateCourse() {
-    // implement
+  @Patch('course/:courseId')
+  async updateCourse(
+    @Param('courseId', UpdateCourseResponseParamsDtoPipe)
+    params: UpdateCourseRequestParamsDto,
+    @Body(UpdateCourseResponseDtoPipe) body: UpdateCourseResponseBodyDto,
+    @AuthUser() user: IAuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    let cover_image_file_id: undefined | string;
+    if (body.files_key) {
+      const [getFilesResult] = await this.fileService.getFiles(
+        body.files_key,
+        'course__course_cover_image',
+        req.ip,
+      );
+      cover_image_file_id = getFilesResult.id;
+    }
+    await this.courseService.updateCourse({
+      courseId: params,
+      courseName: body.course_name,
+      coverImageFileId: cover_image_file_id,
+      userId: user.userId,
+    });
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
+  
   @AuthPermission('COURSE:COURSE:DELETE')
   async deleteCourse() {
     // implement
