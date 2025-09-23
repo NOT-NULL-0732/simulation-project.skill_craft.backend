@@ -69,7 +69,7 @@ export class CourseController {
   @AuthPermission('COURSE:COURSE:UPDATE')
   @Patch('course/:courseId')
   async updateCourse(
-    @Param('courseId', UpdateCourseResponseParamsDtoPipe)
+    @Param(UpdateCourseResponseParamsDtoPipe)
     params: UpdateCourseRequestParamsDto,
     @Body(UpdateCourseResponseDtoPipe) body: UpdateCourseResponseBodyDto,
     @AuthUser() user: IAuthenticatedUser,
@@ -85,7 +85,7 @@ export class CourseController {
       cover_image_file_id = getFilesResult.id;
     }
     await this.courseService.updateCourse({
-      courseId: params,
+      courseId: params.courseId,
       courseName: body.course_name,
       coverImageFileId: cover_image_file_id,
       userId: user.userId,
@@ -96,12 +96,12 @@ export class CourseController {
   @AuthPermission('COURSE:COURSE:DELETE')
   @Delete('course/:courseId')
   async deleteCourse(
-    @Param('courseId', DeleteCourseResponseParamsDtoPipe)
+    @Param(DeleteCourseResponseParamsDtoPipe)
     params: DeleteCourseRequestParamsDto,
     @AuthUser() user: IAuthenticatedUser,
   ) {
     await this.courseService.deleteCourse({
-      courseId: params,
+      courseId: params.courseId,
       userId: user.userId,
     });
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
@@ -109,14 +109,15 @@ export class CourseController {
 
   @AuthPermission('COURSE:COURSE:LIST')
   @Get('course')
-  async listCourse(
-    @AuthUser() user: IAuthenticatedUser
-  ) {
+  async listCourse(@AuthUser() user: IAuthenticatedUser) {
     const listCourseResults = await this.courseService.listCourse({
-      userId: user.userId
-    })
+      userId: user.userId,
+    });
     // TODO 转换逻辑待梳理
-    return createResponse(ResponseStatusCode.REQUEST_SUCCESS, listCourseResponseDto(listCourseResults));
+    return createResponse(
+      ResponseStatusCode.REQUEST_SUCCESS,
+      listCourseResponseDto(listCourseResults),
+    );
   }
 
   @AuthPermission('COURSE:LESSON:LIST')

@@ -11,7 +11,9 @@ export const UpdateCourseRequestBodyDtoSchema = z
     message: '必须有一个更改的参数',
     params: ['name', 'files_key'],
   });
-export const UpdateCourseRequestParams = CommonCourseRequestSchema.course_id;
+export const UpdateCourseRequestParams = z.object({
+  courseId: CommonCourseRequestSchema.course_id,
+});
 // DTO Pipes
 export const UpdateCourseResponseDtoPipe = new ZodValidationPipe(
   UpdateCourseRequestBodyDtoSchema,
