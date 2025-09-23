@@ -17,7 +17,7 @@ export const courseSchema = pgTable('course', {
   created_by: char({ length: 36 })
     .references(() => userSchema.id)
     .notNull(),
-  cover_image: char({ length: 36 }).references(() => fileSchema.id),
+  cover_image: char({ length: 36 }).references(() => fileSchema.id).notNull(),
 });
 
 export const courseSchemaRelations = relations(courseSchema, ({ many }) => ({

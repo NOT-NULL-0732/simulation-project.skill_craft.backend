@@ -12,7 +12,7 @@ export const userSchema = pgTable('user', {
   updated_at: timestamp({ mode: 'string' }).$onUpdateFn(() =>
     new Date().toISOString(),
   ),
-  created_at: timestamp({ mode: 'string' }).defaultNow(),
+  created_at: timestamp({ mode: 'string' }).notNull().defaultNow(),
 });
 
 export const userSchemaRelations = relations(userSchema, ({ many }) => ({

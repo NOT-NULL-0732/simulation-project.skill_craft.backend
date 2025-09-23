@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -30,6 +31,7 @@ import {
   DeleteCourseRequestParamsDto,
   DeleteCourseResponseParamsDtoPipe,
 } from '@/modules/course/dto/request/delete-course.request.dto';
+import { listCourseResponseDto } from './dto/response/list-course.response.dto';
 
 @Controller('course')
 export class CourseController {
@@ -106,9 +108,17 @@ export class CourseController {
   }
 
   @AuthPermission('COURSE:COURSE:LIST')
-  async listCourse() {
-    // implement
+  @Get('course')
+  async listCourse(
+    @AuthUser() user: IAuthenticatedUser
+  ) {
+    const listCourseResults = await this.courseService.listCourse({
+      userId: user.userId
+    })
+    // TODO 转换逻辑待梳理
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS, listCourseResponseDto(listCourseResults));
   }
+
   @AuthPermission('COURSE:LESSON:LIST')
   async listLesson() {
     // implement

@@ -5,6 +5,13 @@ import {
   UserZSchema,
 } from '@/modules/auth/auth.z-schema';
 
+export interface IUserInfo {
+  id: string,
+  email: string,
+  username: string,
+  created_at: string,
+}
+
 export interface LoginTokenData {
   userId: string;
   signDate: number; // 签名日期
