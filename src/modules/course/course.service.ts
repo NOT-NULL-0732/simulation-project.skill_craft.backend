@@ -1,9 +1,23 @@
 import { Injectable } from '@nestjs/common';
+import db from '@/db';
+import { courseSchema } from '@/db/schema/course.schema';
 
 @Injectable()
 export class CourseService {
-  async createCourse() {
-    // implement
+  async createCourse(data: {
+    userId: string;
+    courseName: string;
+    coverImageFileId: string;
+  }) {
+    const [insertCourseResult] = await db
+      .insert(courseSchema)
+      .values({
+        name: data.courseName,
+        created_by: data.userId,
+        cover_image: data.coverImageFileId,
+      })
+      .returning();
+    return insertCourseResult;
   }
   async updateCourse() {
     // implement
