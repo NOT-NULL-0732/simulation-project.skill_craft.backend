@@ -41,8 +41,16 @@ export class CourseService {
         ),
       );
   }
-  async deleteCourse() {
-    // implement
+  
+  async deleteCourse(data: { courseId: string; userId: string }) {
+    await db
+      .delete(courseSchema)
+      .where(
+        and(
+          eq(courseSchema.id, data.courseId),
+          eq(courseSchema.created_by, data.userId),
+        ),
+      );
   }
   async listCourse() {
     // implement

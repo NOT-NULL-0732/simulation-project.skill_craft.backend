@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Patch, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Patch,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { CourseService } from '@/modules/course/course.service';
 import { FileService } from '@/modules/file/file.service';
 import { AuthPermission } from '@/common/decorator/permission.decorator';
@@ -18,6 +26,10 @@ import {
   UpdateCourseResponseDtoPipe,
   UpdateCourseResponseParamsDtoPipe,
 } from '@/modules/course/dto/request/update-course.request.dto';
+import {
+  DeleteCourseRequestParamsDto,
+  DeleteCourseResponseParamsDtoPipe,
+} from '@/modules/course/dto/request/delete-course.request.dto';
 
 @Controller('course')
 export class CourseController {
@@ -78,11 +90,21 @@ export class CourseController {
     });
     return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
-  
+
   @AuthPermission('COURSE:COURSE:DELETE')
-  async deleteCourse() {
-    // implement
+  @Delete('course/:courseId')
+  async deleteCourse(
+    @Param('courseId', DeleteCourseResponseParamsDtoPipe)
+    params: DeleteCourseRequestParamsDto,
+    @AuthUser() user: IAuthenticatedUser,
+  ) {
+    await this.courseService.deleteCourse({
+      courseId: params,
+      userId: user.userId,
+    });
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
+
   @AuthPermission('COURSE:COURSE:LIST')
   async listCourse() {
     // implement
