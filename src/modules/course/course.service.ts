@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import db from '@/db';
 import { courseSchema } from '@/db/schema/course.schema';
 import { and, eq } from 'drizzle-orm';
-import { IListCourseInfo } from './types/common-course.type';
 import { userSchema } from '@/db/schema/user.schema';
 
 @Injectable()
@@ -54,22 +53,21 @@ export class CourseService {
       );
   }
 
-  async listCourse(data: {
-    userId: string,
-  }) {
-    return await db.select({
-      course_id: courseSchema.id,
-      course_name: courseSchema.name,
-      course_created_by: courseSchema.created_by,
-      course_cover_image: courseSchema.cover_image,
-      user_id: userSchema.id,
-      user_username: userSchema.username,
-      user_email: userSchema.email,
-      user_created_at: userSchema.created_at
-    })
+  async listCourse(data: { userId: string }) {
+    return await db
+      .select({
+        course_id: courseSchema.id,
+        course_name: courseSchema.name,
+        course_created_by: courseSchema.created_by,
+        course_cover_image: courseSchema.cover_image,
+        user_id: userSchema.id,
+        user_username: userSchema.username,
+        user_email: userSchema.email,
+        user_created_at: userSchema.created_at,
+      })
       .from(courseSchema)
       .where(eq(courseSchema.created_by, data.userId))
-      .innerJoin(userSchema, eq(userSchema.id, data.userId))
+      .innerJoin(userSchema, eq(userSchema.id, data.userId));
   }
   async listLesson() {
     // implement

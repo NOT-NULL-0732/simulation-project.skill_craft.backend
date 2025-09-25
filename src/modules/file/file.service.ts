@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { BusinessException } from '@/common/exception/business.exception';
-import { FILE_CONFIG, UPLOAD_FILE_SERVICE_KEY, } from '@/common/config/file.config';
+import {
+  FILE_CONFIG,
+  UPLOAD_FILE_SERVICE_KEY,
+} from '@/common/config/file.config';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
 import db from '@/db';
 import { fileSchema, FileSchemaWithStatus } from '@/db/schema/file.schema';
