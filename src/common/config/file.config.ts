@@ -13,16 +13,16 @@ export enum SIZE_UNIT {
 export interface UPLOAD_FILE_SERVICE_CONFIG {
   maxSize: number;
   limit: number;
-  savePath: string
+  savePath: string;
 }
 
 export const FILE_CONFIG: Record<
-  UPLOAD_FILE_SERVICE_KEY[number],
+  UPLOAD_FILE_SERVICE_KEY,
   UPLOAD_FILE_SERVICE_CONFIG
 > = {
   course__course_cover_image: {
     limit: 1,
     maxSize: 300 * SIZE_UNIT.MB,
-    savePath: 'course'
+    savePath: 'course',
   },
 };

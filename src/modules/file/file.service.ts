@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BusinessException } from '@/common/exception/business.exception';
-import {
-  FILE_CONFIG,
-  UPLOAD_FILE_SERVICE_KEY,
-} from '@/common/config/file.config';
+import { FILE_CONFIG, UPLOAD_FILE_SERVICE_KEY, } from '@/common/config/file.config';
 import { ResponseStatusCode } from '@/common/types/response-status.enum';
 import db from '@/db';
 import { fileSchema, FileSchemaWithStatus } from '@/db/schema/file.schema';
@@ -35,7 +32,7 @@ export class FileService {
         ResponseStatusCode.UPLOAD_FILE__OVER_LIMIT_ERROR,
       );
     files.map((file) => {
-      if (file.size > UPLOAD_FILE_CONFIG.maxSize)
+      if (file.size === 0 && file.size > UPLOAD_FILE_CONFIG.maxSize)
         throw new BusinessException(
           ResponseStatusCode.UPLOAD_FILE__OVER_LIMIT_ERROR,
         );
