@@ -123,7 +123,6 @@ export class AuthService {
     const { userId, signDate } = JSON.parse(
       this.cryptoService.decrypted(userToken),
     ) as LoginTokenData;
-    console.log(signDate, typeof signDate);
 
     // 计算过期;
     if (Date.now() - signDate > 1000 * 60 * 60 * 24 * 7)
