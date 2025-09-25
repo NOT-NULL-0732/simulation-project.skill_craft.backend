@@ -54,7 +54,7 @@ export class CourseService {
   }
 
   async listCourse(data: { userId: string }) {
-    return await db
+    return db
       .select({
         course_id: courseSchema.id,
         course_name: courseSchema.name,
@@ -69,27 +69,35 @@ export class CourseService {
       .where(eq(courseSchema.created_by, data.userId))
       .innerJoin(userSchema, eq(userSchema.id, data.userId));
   }
+
   async listLesson() {
     // implement
   }
+
   async createLesson() {
     // implement
   }
+
   async deleteLesson() {
     // implement
   }
+
   async updateLesson() {
     // implement
   }
+
   async listLessonResource() {
     // implement
   }
+
   async createLessonResource() {
     // implement
   }
+
   async deleteLessonResource() {
     // implement
   }
+
   async updateLessonResource() {
     // implement
   }
