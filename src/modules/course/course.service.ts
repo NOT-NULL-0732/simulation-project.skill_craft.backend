@@ -250,7 +250,7 @@ export class CourseService {
   }
 
   // 判断lesson node order是否重复
-  async _judgeLessonOrderRepeat(data: {
+  private async _judgeLessonOrderRepeat(data: {
     lessonId: string;
     parentLessonId?: string;
     order: number;
@@ -274,7 +274,10 @@ export class CourseService {
     }
   }
 
-  async _canAccessCourseLesson(data: { userId: string; lessonId?: string }) {
+  private async _canAccessCourseLesson(data: {
+    userId: string;
+    lessonId?: string;
+  }) {
     if (!data.lessonId) return;
     const [selectCourseLessonAndCourseResult] = await db
       .select({
@@ -294,7 +297,7 @@ export class CourseService {
   }
 
   // 访问课程验证
-  async _canAccessCourse(data: { courseId: string; userId: string }) {
+  private async _canAccessCourse(data: { courseId: string; userId: string }) {
     const isOwner = Boolean(
       await db
         .select()
