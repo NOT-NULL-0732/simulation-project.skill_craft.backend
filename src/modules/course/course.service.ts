@@ -8,67 +8,6 @@ import { ResponseStatusCode } from '@/common/types/response-status.enum';
 
 @Injectable()
 export class CourseService {
-  // 判断lesson node order是否重复
-  async _judgeLessonOrderRepeat(data: {
-    lessonId: string;
-    parentLessonId?: string;
-    order: number;
-  }) {
-    const [queryRepeatLessonOrder] = await db
-      .select({
-        id: courseLessonSchema.id,
-      })
-      .from(courseLessonSchema)
-      .where(
-        and(
-          eq(courseLessonSchema.id, data.lessonId),
-          eq(courseLessonSchema.order, data.order),
-          data.parentLessonId
-            ? eq(courseLessonSchema.parent_id, data.parentLessonId)
-            : isNull(courseLessonSchema.parent_id),
-        ),
-      );
-    if (queryRepeatLessonOrder) {
-      throw new BusinessException(ResponseStatusCode.COURSE__REPEAT_ORDER);
-    }
-  }
-
-  async _canAccessCourseLesson(data: { userId: string; lessonId?: string }) {
-    if (!data.lessonId) return;
-    const [selectCourseLessonAndCourseResult] = await db
-      .select({
-        course_created_by: courseSchema.created_by,
-      })
-      .from(courseLessonSchema)
-      .where(eq(courseLessonSchema.id, data.lessonId))
-      .innerJoin(
-        courseSchema,
-        eq(courseSchema.id, courseLessonSchema.course_id),
-      );
-    if (
-      !selectCourseLessonAndCourseResult ||
-      selectCourseLessonAndCourseResult.course_created_by !== data.userId
-    )
-      throw new BusinessException(ResponseStatusCode.COURSE__NOT_PERMISSION);
-  }
-
-  // 访问课程验证
-  async _canAccessCourse(data: { courseId: string; userId: string }) {
-    const isOwner = Boolean(
-      await db
-        .select()
-        .from(courseSchema)
-        .where(
-          and(
-            eq(courseSchema.id, data.courseId),
-            eq(courseSchema.created_by, data.userId),
-          ),
-        ),
-    );
-    // TODO 错误类型待完善
-    if (!isOwner) throw new ForbiddenException();
-  }
-
   // order平衡机制 当前后项目相差小于100则重新调整为间隔10000 (0 <= order <= 10000000)
   async _lessonBalance(data: { courseId: string; parent_id?: string }) {
     const peerLessonNode = await db
@@ -96,6 +35,7 @@ export class CourseService {
       });
     });
   }
+
   async createCourse(data: {
     userId: string;
     courseName: string;
@@ -307,5 +247,66 @@ export class CourseService {
 
   async updateLessonResource() {
     // implement
+  }
+
+  // 判断lesson node order是否重复
+  async _judgeLessonOrderRepeat(data: {
+    lessonId: string;
+    parentLessonId?: string;
+    order: number;
+  }) {
+    const [queryRepeatLessonOrder] = await db
+      .select({
+        id: courseLessonSchema.id,
+      })
+      .from(courseLessonSchema)
+      .where(
+        and(
+          eq(courseLessonSchema.id, data.lessonId),
+          eq(courseLessonSchema.order, data.order),
+          data.parentLessonId
+            ? eq(courseLessonSchema.parent_id, data.parentLessonId)
+            : isNull(courseLessonSchema.parent_id),
+        ),
+      );
+    if (queryRepeatLessonOrder) {
+      throw new BusinessException(ResponseStatusCode.COURSE__REPEAT_ORDER);
+    }
+  }
+
+  async _canAccessCourseLesson(data: { userId: string; lessonId?: string }) {
+    if (!data.lessonId) return;
+    const [selectCourseLessonAndCourseResult] = await db
+      .select({
+        course_created_by: courseSchema.created_by,
+      })
+      .from(courseLessonSchema)
+      .where(eq(courseLessonSchema.id, data.lessonId))
+      .innerJoin(
+        courseSchema,
+        eq(courseSchema.id, courseLessonSchema.course_id),
+      );
+    if (
+      !selectCourseLessonAndCourseResult ||
+      selectCourseLessonAndCourseResult.course_created_by !== data.userId
+    )
+      throw new BusinessException(ResponseStatusCode.COURSE__NOT_PERMISSION);
+  }
+
+  // 访问课程验证
+  async _canAccessCourse(data: { courseId: string; userId: string }) {
+    const isOwner = Boolean(
+      await db
+        .select()
+        .from(courseSchema)
+        .where(
+          and(
+            eq(courseSchema.id, data.courseId),
+            eq(courseSchema.created_by, data.userId),
+          ),
+        ),
+    );
+    // TODO 错误类型待完善
+    if (!isOwner) throw new ForbiddenException();
   }
 }
