@@ -3,9 +3,36 @@ import db from '@/db';
 import { courseLessonSchema, courseSchema } from '@/db/schema/course.schema';
 import { and, eq, isNull } from 'drizzle-orm';
 import { userSchema } from '@/db/schema/user.schema';
+import { BusinessException } from '@/common/exception/business.exception';
+import { ResponseStatusCode } from '@/common/types/response-status.enum';
 
 @Injectable()
 export class CourseService {
+  // 判断lesson node order是否重复
+  async _judgeLessonOrderRepeat(data: {
+    lessonId: string;
+    parentLessonId?: string;
+    order: number;
+  }) {
+    const [queryRepeatLessonOrder] = await db
+      .select({
+        id: courseLessonSchema.id,
+      })
+      .from(courseLessonSchema)
+      .where(
+        and(
+          eq(courseLessonSchema.id, data.lessonId),
+          eq(courseLessonSchema.order, data.order),
+          data.parentLessonId
+            ? eq(courseLessonSchema.parent_id, data.parentLessonId)
+            : isNull(courseLessonSchema.parent_id),
+        ),
+      );
+    if (queryRepeatLessonOrder) {
+      throw new BusinessException(ResponseStatusCode.COURSE__REPEAT_ORDER);
+    }
+  }
+
   async _canAccessCourseLesson(data: { userId: string; lessonId?: string }) {
     if (!data.lessonId) return;
     const [selectCourseLessonAndCourseResult] = await db
@@ -22,8 +49,7 @@ export class CourseService {
       !selectCourseLessonAndCourseResult ||
       selectCourseLessonAndCourseResult.course_created_by !== data.userId
     )
-      // TODO 错误类型待完善
-      throw new ForbiddenException();
+      throw new BusinessException(ResponseStatusCode.COURSE__NOT_PERMISSION);
   }
 
   // 访问课程验证
@@ -182,7 +208,8 @@ export class CourseService {
         ),
       )
       .execute();
-    if (queryRepeatLessonOrder) throw new Error('重复的order');
+    if (queryRepeatLessonOrder)
+      throw new BusinessException(ResponseStatusCode.COURSE__REPEAT_ORDER);
     const [createCourseLessonResult] = await db
       .insert(courseLessonSchema)
       .values({
@@ -239,6 +266,12 @@ export class CourseService {
       lessonId: data.updateData.parentId,
       userId: data.userId,
     });
+    if (data.updateData.order)
+      await this._judgeLessonOrderRepeat({
+        order: data.updateData.order,
+        lessonId: data.lessonId,
+        parentLessonId: data.updateData.parentId,
+      });
     await db
       .update(courseLessonSchema)
       .set({

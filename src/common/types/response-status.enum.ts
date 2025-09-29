@@ -12,6 +12,7 @@ export enum ResponseStatusCode {
   AUTH__PERMISSION_VALIDATOR_ERROR = 2008,
   // 3000 ~ 3999 课程模块相关
   COURSE__NOT_PERMISSION = 3001,
+  COURSE__REPEAT_ORDER = 3002,
   // 4000 ~ 4999 文件上传相关
   UPLOAD_FILE__OVER_LIMIT_ERROR = 4000,
   UPLOAD_FILE__FILE_WRITE_ERROR = 4001,
@@ -34,7 +35,8 @@ export const StatusMessage: Record<ResponseStatusCode, string> = {
   [ResponseStatusCode.AUTH__USER_NOT_LOGIN_ERROR]: '用户未登录',
   [ResponseStatusCode.AUTH__PERMISSION_VALIDATOR_ERROR]: '用户缺少权限',
   // 3000 ~ 3999 课程模块相关
-  [ResponseStatusCode.COURSE__NOT_PERMISSION]: "无权限操作",
+  [ResponseStatusCode.COURSE__NOT_PERMISSION]: '无权限操作',
+  [ResponseStatusCode.COURSE__REPEAT_ORDER]: '重复的order',
   // 4000 ~ 4999 文件上传相关
   [ResponseStatusCode.UPLOAD_FILE__OVER_LIMIT_ERROR]: '超出上传配置限制',
   [ResponseStatusCode.UPLOAD_FILE__FILE_WRITE_ERROR]: '文件写入失败',
