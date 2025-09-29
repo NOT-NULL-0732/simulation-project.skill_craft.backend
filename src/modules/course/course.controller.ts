@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { CourseService } from '@/modules/course/course.service';
 import { FileService } from '@/modules/file/file.service';
 import { AuthPermission } from '@/common/decorator/permission.decorator';
@@ -23,6 +32,26 @@ import {
   DeleteCourseResponseParamsDtoPipe,
 } from '@/modules/course/dto/request/delete-course.request.dto';
 import { listCourseResponseDto } from './dto/response/list-course.response.dto';
+import {
+  ListLessonResponseParamsDto,
+  ListLessonResponseParamsPipe,
+} from '@/modules/course/dto/request/list-lesson.request.dto';
+import {
+  UpdateLessonRequestBodyDto,
+  UpdateLessonRequestBodyDtoPipe,
+  UpdateLessonRequestParamsDto,
+  UpdateLessonRequestParamsDtoPipe,
+} from '@/modules/course/dto/request/update-lesson.request.dto';
+import {
+  CreateLessonRequestBodyDto,
+  CreateLessonRequestBodyDtoPipe,
+  CreateLessonRequestParamsDto,
+  CreateLessonRequestParamsDtoPipe,
+} from './dto/request/create-lesson.request.dto';
+import {
+  DeleteLessonResponseParamsDto,
+  DeleteLessonResponseParamsPipe,
+} from '@/modules/course/dto/request/delete-lesson.request.dto';
 
 @Controller('course')
 export class CourseController {
@@ -112,23 +141,73 @@ export class CourseController {
   }
 
   @AuthPermission('COURSE:LESSON:LIST')
-  async listLesson() {
-    // implement
+  @Get(':courseId/lessons')
+  async listLesson(
+    @Param(ListLessonResponseParamsPipe) params: ListLessonResponseParamsDto,
+    @AuthUser() user: IAuthenticatedUser,
+  ) {
+    const listLessonResult = await this.courseService.listLesson({
+      courseId: params.courseId,
+      userId: user.userId,
+    });
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS, listLessonResult);
   }
 
   @AuthPermission('COURSE:LESSON:CREATE')
-  async createLesson() {
-    // implement
+  @Post(':courseId/lessons')
+  async createLesson(
+    @Param(CreateLessonRequestParamsDtoPipe)
+    params: CreateLessonRequestParamsDto,
+    @AuthUser() user: IAuthenticatedUser,
+    @Body(CreateLessonRequestBodyDtoPipe) body: CreateLessonRequestBodyDto,
+  ) {
+    const createLessonResult = await this.courseService.createLesson({
+      course_id: params.courseId,
+      name: body.lesson_name,
+      order: body.lesson_order,
+      parent_id: body.parent_lesson_id,
+      user_id: user.userId,
+    });
+    return createResponse(
+      ResponseStatusCode.REQUEST_SUCCESS,
+      createLessonResult,
+    );
   }
 
   @AuthPermission('COURSE:LESSON:DELETE')
-  async deleteLesson() {
-    // implement
+  @Delete(':courseId/lessons/:lessonId')
+  async deleteLesson(
+    @Param(DeleteLessonResponseParamsPipe)
+    params: DeleteLessonResponseParamsDto,
+    @AuthUser() user: IAuthenticatedUser,
+  ) {
+    await this.courseService.deleteLesson({
+      courseId: params.courseId,
+      lessonId: params.lessonId,
+      userId: user.userId,
+    });
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 
   @AuthPermission('COURSE:LESSON:UPDATE')
-  async updateLesson() {
-    // implement
+  @Patch(':courseId/lessons/:lessonId')
+  async updateLesson(
+    @Param(UpdateLessonRequestParamsDtoPipe)
+    params: UpdateLessonRequestParamsDto,
+    @Body(UpdateLessonRequestBodyDtoPipe) body: UpdateLessonRequestBodyDto,
+    @AuthUser() user: IAuthenticatedUser,
+  ) {
+    await this.courseService.updateLesson({
+      courseId: params.courseId,
+      lessonId: params.lessonId,
+      userId: user.userId,
+      updateData: {
+        name: body.lesson_name,
+        order: body.lesson_order,
+        parentId: body.parent_lesson_id,
+      },
+    });
+    return createResponse(ResponseStatusCode.REQUEST_SUCCESS);
   }
 
   @AuthPermission('COURSE:LESSON_RESOURCE:LIST')
